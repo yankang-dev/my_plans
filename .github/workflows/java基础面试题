@@ -1,26 +1,51 @@
 1.List和Set的区别。
-
-List中的元素有序且可重复，常用的实现类有：
-ArrayList: 内部是通过一个数组实现的；
-LinkedList：内部是通过一个链表实现的。
-Set中的元素无序且不可重复，常见的实现类有：
-HashSet: 内部是通过一个HashMap对象实现的；
-TreeSet：内部是通过一个TreeMap(Map + Comparator)对象实现的，该集合中元素的顺序是通过比较器定义的.
+    List中的元素有序且可重复，常用的实现类有：
+    ArrayList: 内部是通过一个数组实现的；
+    LinkedList：内部是通过一个链表实现的。
+    Set中的元素无序且不可重复，常见的实现类有：
+    HashSet: 内部是通过一个HashMap对象实现的；
+    TreeSet：内部是通过一个TreeMap(Map + Comparator)对象实现的，该集合中元素的顺序是通过比较器定义的.
+	
 2.HashSet是如何保证元素的互异性？
+	HashSet的内部使用的是一个HashMap实例存放元素的，元素被存放在HashMap的键中，所以它是通过HashMap键值的唯一特性来保证元素的互异性的。
 
-HashSet的内部使用的是一个HashMap实例存放元素的，元素被存放在HashMap的键中，所以它是通过HashMap键值的唯一特性来保证元素的互异性的。
+	HashSet类的部分源码：
+	...
+	private transient HashMap<E,Object> map;
+	...
+	public boolean add(E e) {
+    	return map.put(e, PRESENT)==null;
+	}
+	
+3、简述final、finally与finalize的用法与含义
+	https://www.cnblogs.com/ktao/p/8586966.html
 
-HashSet类的部分源码：
-...
-private transient HashMap<E,Object> map;
-...
-public boolean add(E e) {
-    return map.put(e, PRESENT)==null;
-}
-3、Java语言的关键字，变量修饰符，如果用transient声明一个实例变量，当对象存储时，它的值不需要维持。换句话来说就是，用transient关键字标记的成员变量不参与序列化过程。
+4、Java语言的关键字，变量修饰符，如果用transient声明一个实例变量，当对象存储时，它的值不需要维持。换句话来说就是，用transient关键字标记的成员变量不	参与序列化过程。
+	作用：Java的serialization提供了一种持久化对象实例的机制。当持久化对象时，可能有一个特殊的对象数据成员，我们不想用serialization机制来保存它。为		了在一个特定对象的一个域上关闭serialization，可以在这个域前加上关键字transient。当一个对象被序列化的时候，transient型变量的值不包括在序列化的表示中，然而非transient型的变量是被包括进去的。
 
-作用：Java的serialization提供了一种持久化对象实例的机制。当持久化对象时，可能有一个特殊的对象数据成员，我们不想用serialization机制来保存它。为了在一个特定对象的一个域上关闭serialization，可以在这个域前加上关键字transient。当一个对象被序列化的时候，transient型变量的值不包括在序列化的表示中，然而非transient型的变量是被包括进去的。
-
-4、ArrayList和HashMap线程安全性问题
-  第一都不是安全的，
-  第二Arraylist因为内部是通过数组实现的在数组扩充或者赋值过程中造成数组越界、为null.
+5、ArrayList和HashMap线程安全性问题，都不是安全的。
+	ArrayList:因为内部是通过数组实现的,在数组扩充或者赋值过程中会造成数组越界、为null等现象。解决办法：1、new 对象时用Vector替代ArrayList,因为在	Vector中使用了synchronized加锁处理。2、使用Collections.synchronizedList(List)进行替换，使用mutex对象进行维护处理.Object mutex = new 		Object(). 这边就是创建了一个临时空间用于辅助独占的处理.
+	后记.集合类中只有Vector/Stack、hashTable是线程安全的，其他都是不安全的。
+	HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,		那么查找，添加等操作很快，仅需一次寻址即可；如果定位到的数组包含链表，对于添加操作，其时间复杂度为O(n)，首先遍历链表，存在即覆盖，否则新增；	对于查	找操作来讲，仍需遍历链表，然后通过key对象的equals方法逐一比对查找。所以，性能考虑，HashMap中的链表出现越少，性能才会越好.解决办法：	ConcurrentHashMap
+	
+6、https://blog.csdn.net/woshimaxiao1/article/details/83661464
+7、简述强引用、软引用、弱引用与虚引用的含义
+	引用类型	被回收时间	用途	生存时间
+	强引用	从来不会	对象的一般状态	JVM停止运行时
+	软引用	内存不足时	对象缓存	内存不足时
+	弱引用	jvm垃圾回收时	对象缓存	gc运行后
+	虚引用	未知	未知	未知
+	在Java语言中，程序员几乎是“无法”手动的去管理对象的生命周期的。在某些场景下，为了便于对java对象生命周期更“精细化”的管理，
+	Java语言中引入了这四种引用。
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	引用类型  |     实现类         |   生命周期    
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	强引用    |      无           |  对象存在强引用，JVM不会回收这个对象，即使抛出OOM异常
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	软引用    | SoftReference     |  对象只存在软引用，JVM会在内存不足时回收这个对象
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	弱引用    | WeakReference     |  对象只存在弱引用，JVM进行垃圾回收时就会回收这个对象(不论内存是否充足)
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	虚引用    | PhantomReference  |  对象只存在虚引用，这个对象任何时候都可能被垃圾回收器回收
+	+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	https://mp.weixin.qq.com/s/p3Z-iqDCXCiVbf4r5Y_FCA
