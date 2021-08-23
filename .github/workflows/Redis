@@ -1,1 +1,11 @@
-das
+1、为了保证效率，数据都是缓存在内存中,区别的是 Redis 会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录
+文件，并且在此基础上实现了 master-slave(主从)同步。
+
+2、作为 Key-value 型数据库，Redis 也提供了键（Key）和键值（Value）的映射关系。但是，除
+了常规的数值或字符串，Redis 的键值还可以是以下形式之一：
+ Lists （列表）
+ Sets （集合）
+ Sorted sets （有序集合）
+ Hashes （哈希表）
+
+https://blog.csdn.net/weixin_43664418/article/details/103482005?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-1.essearch_pc_relevant&spm=1001.2101.3001.4242
