@@ -1,1 +1,541 @@
-4
+5.2.55	矩阵最大值（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个仅包含0和1的N*N二维矩阵，请计算二维矩阵的最大值，计算规则如下：
+1、 每行元素按下标顺序组成一个二进制数（下标越大越排在低位），二进制数的值就是该行的值。矩阵各行值之和为矩阵的值。
+2、允许通过向左或向右整体循环移动每行元素来改变各元素在行中的位置。
+      比如： [1,0,1,1,1]向右整体循环移动2位变为[1,1,1,0,1]，二进制数为11101，值为29。
+                  [1,0,1,1,1]向左整体循环移动2位变为[1,1,1,1,0]，二进制数为11110，值为30。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+
+    // 每行最大值相加， maxBin
+    // 尽可能把 1 放到前面
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.nextLine());
+
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            String[] str = sc.nextLine().split(",");
+            int arr[] = new int[n];
+            for (int j = 0; j < n; j++) {
+                arr[j] = Integer.parseInt(str[j]);
+            }
+            // 队列，前 N 位最多个 1
+            int max = 0;
+            for (int j = 0; j < n; j++) {
+                int add = add(arr, j);
+                max = Math.max(add, max);
+            }
+            ans += max;
+        }
+        System.out.println(ans);
+    }
+
+    public static int add(int[] arr, int index) {
+        int ans = 0, len = arr.length;
+        for (int flag = 0; flag < len; flag++) {
+            int i = index < len ? index : index % len;
+            ans += Math.pow(2, len - 1 - flag) * arr[i];
+            index++;
+        }
+        return ans;
+    }
+}
+5.2.56	消消乐游戏（*）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+游戏规则：输入一个只包含英文字母的字符串，字符串中的两个字母如果相邻且相同，就可以消除。
+
+在字符串上反复执行消除的动作，直到无法继续消除为止，此时游戏结束。
+输出最终得到的字符串长度。
+参考代码（Python）
+def Solution():
+        str_input = input()
+        # 输入中包含非大小写字母，此时直接返回0
+        str_iter = str_input
+        str_val = str_input
+        index_start = 0
+        while True:
+        for index in range(index_start, len(str_iter)):
+        if str_iter[index].islower() or str_iter[index].isupper():
+        # 最后一个字母不需要验证
+        if index == len(str_iter)-1:
+        continue
+        if str_iter[index] == str_iter[index+1]:
+        str_iter = str_iter[0:index]+str_iter[index+2:]
+        # 记录本次的索引节点index，下次遍历从index-1开始
+        if index > 0:
+        index_start = index-1
+        break
+        else:
+        print(0)
+        return
+        if str_iter == str_val:
+        break
+        str_val = str_iter
+        print(len(str_iter))
+
+
+        if __name__ == '__main__':
+        Solution()
+5.2.57	求最多可以派出多少支团队（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+用数组代表每个人的能力，一个比赛活动要求参赛团队的最低能力值为N，每个团队可以由1人或2人组成，且1个人只能参加1个团队，请计算出最多可以派出多少支符合要求的团队？
+参考代码（Java）
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int len = Integer.parseInt(reader.readLine());
+        String numString = reader.readLine();
+        int target = Integer.parseInt(reader.readLine());
+
+        String[] split = numString.split(" ");
+        int[] ints = new int[split.length];
+        for (int i = 0; i < split.length; i++) {
+            ints[i] = Integer.parseInt(split[i]);
+        }
+        System.out.println(calculate(ints,target));
+    }
+    public static int calculate(int[] nums , int target){
+        Arrays.sort(nums);
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] < target){
+                count++;
+            }else {
+                break;
+            }
+        }
+        int[] mid = Arrays.copyOfRange(nums, 0, count);
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < mid.length; i++) {
+            list.add(mid[i]);
+        }
+        int c = 0 , i = 0;
+        int prob = list.size() - 1;
+        while (i < prob){
+            if (list.get(i) + list.get(prob) < target){
+                i++;
+            }else {
+                c++;
+                i++;
+                prob--;
+            }
+        }
+
+        return c + nums.length - mid.length;
+    }
+}
+5.2.58	TLV解码（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：C、C++、Pascal、Java、Python、Php、C#、Object C、Python 3、Javascript、Javascript_V8、Sqlite、R、Go、Ruby、Swift、Matlab、C++14、Bash、Pypy2、Pypy3
+TLV编码是按[Tag Length Value]格式进行编码的，一段码流中的信元用Tag标识，Tag在码流中唯一不重复，Length表示信元Value的长度，Value表示信元的值。
+码流以某信元的Tag开头，Tag固定占一个字节，Length固定占两个字节，字节序为小端序。
+现给定TLV格式编码的码流，以及需要解码的信元Tag，请输出该信元的Value。
+输入码流的16机制字符中，不包括小写字母，且要求输出的16进制字符串中也不要包含小写字母；码流字符串的最大长度不超过50000个字节。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner=new Scanner(System.in);
+        String tag=scanner.nextLine();
+        String data = scanner.nextLine();
+        String[] data_split=data.split("\\s+");
+        for (int i=0;i < data_split.length; ){
+            int length=Integer.parseInt(data_split[i+2] + data_split[i+1],16);
+            if(tag.equals(data_split[i])){
+                StringBuffer sb=new StringBuffer();
+                for (int j=i+3;j<i+3+length;j++){
+                    sb.append(data_split[j]).append(" ");
+                }
+                System.out.println(sb.toString());
+                break;
+            }else {
+                i+=length+3;
+            }
+        }
+        scanner.close();
+    }
+}
+5.2.59	喊7的次数重排（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+喊7是一个传统的聚会游戏，N个人围成一圈，按顺时针从1到N编号。编号为1的人从1开始喊数，下一个人喊的数字为上一个人的数字加1，但是当将要喊出来的数字是7的倍数或者数字本身含有7的话，不能把这个数字直接喊出来，而是要喊"过"。假定玩这个游戏的N个人都没有失误地在正确的时机喊了"过"，当喊到数字K时，可以统计每个人喊"过"的次数。
+
+现给定一个长度为N的数组，存储了打乱顺序的每个人喊"过"的次数，请把它还原成正确的顺序，即数组的第i个元素存储编号i的人喊"过"的次数。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String[] person=scanner.nextLine().split(" ");
+        int sum=0;
+        for(String s:person){
+            sum=sum+Integer.parseInt(s);
+        }
+        int[] res=new int[person.length];
+        int j=0;
+        for(int i=1;i<=200;i++,j++){
+            if(j==person.length){
+                j=0;
+            }
+            if(i%7==0||(i+"").contains("7")){
+                res[j]+=1;
+            }
+            int sum1=0;
+            for(int re:res){
+                sum1+=re;
+            }
+            if(sum==sum1)
+                break;
+        }
+        StringBuffer sb=new StringBuffer();
+        for (int re:res){
+            sb.append(re).append(" ");
+        }
+        String s=sb.toString();
+        System.out.println(s.substring(0,s.length() - 1));
+        scanner.close();
+    }
+}
+5.2.60	字符串筛选排序（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+输入一个由n个大小写字母组成的字符串，按照Ascii码值从小到大的排序规则，查找字符串中第k个最小ascii码值的字母（k>=1），输出该字母所在字符串的位置索引(字符串的第一个字符位置索引为0）。
+k如果大于字符串长度，则输出最大ascii值的字母所在字符串的位置索引，如果有重复的字母，则输出字母的最小位置索引。
+参考代码（Java）
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        int k = sc.nextInt();
+        char[] chars = s.toCharArray();
+        Map<Integer, Integer> map = new HashMap<>();
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int i = 0; i < chars.length; i++) {
+            if (map.get(Integer.valueOf(chars[i]) ) == null){
+                map.put(Integer.valueOf(chars[i]),i );
+            }
+            list.add(Integer.valueOf(chars[i]));
+        }
+        //System.out.println(map.toString());
+        Set<Integer> integers = map.keySet();
+        Integer[] array = integers.toArray(new Integer[]{});
+        Arrays.sort(array);
+
+        Integer[] newList = list.toArray(new Integer[]{});
+        Arrays.sort(newList);
+        List<Integer> integers2 = Arrays.asList(newList);
+        if (k > chars.length){
+            System.out.println(map.get(integers2.get(chars.length-1)));
+        }else {
+            Integer retKey = integers2.get(k - 1);
+            System.out.println(map.get(retKey));
+        }
+    }
+}
+5.2.61	乱序整数序列两数之和绝对值最小（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个随机的整数（可能存在正整数和负整数）数组 nums ，请你在该数组中找出两个数，其和的绝对值(|nums[x]+nums[y]|)为最小值，并返回这个两个数（按从小到大返回）以及绝对值。
+每种输入只会对应一个答案。但是，数组中同一个元素不能使用两遍。
+参考代码（Java）
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String inString = in.nextLine();
+        String[] strArray = inString.split(" ");
+        Set<Integer> list = new TreeSet<Integer>();
+        for(String str:strArray){
+            int num = Integer.parseInt(str);
+            if(num>=-65535 && num<=65535){
+                list.add(num);
+            }
+        }
+        Integer[] intArray = new Integer[list.size()];
+        int count = 0;
+        for(Integer num:list){
+            intArray[count]=num;
+            count++;
+        }
+        if(intArray[0]>=0){
+            int c = intArray[0]+intArray[1];
+            System.out.println(intArray[0]+" "+intArray[1]+" "+c);
+        }else if(intArray[intArray.length-1]<=0){
+            int a= intArray[intArray.length-2];
+            int b = intArray[intArray.length-1];
+            int c = a+b;
+            c = -c;
+            System.out.println(a+" "+b+" "+c);
+        }else{
+            int a=0;
+            int b=0;
+            int c=65535;
+            for(int i=0;i<intArray.length-1;i++){
+                if(intArray[i]<=0){
+                    for(int j=i+1;j<intArray.length;j++){
+                        int temp = intArray[i]+intArray[j];
+                        if(temp<0){
+                            temp=-temp;
+                        }
+                        if(temp<c){
+                            a=intArray[i];
+                            b=intArray[j];
+                            c=temp;
+                        }
+                    }
+                }
+            }
+            System.out.println(a+" "+b+" "+c);
+        }
+    }
+}
+5.2.62	用连续自然数之和来表达整数（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+一个整数可以由连续的自然数之和来表示。给定一个整数，计算该整数有几种连续自然数之和的表达式，且打印出每种表达式。
+参考代码（Java）
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int number = in.nextInt();
+        System.out.println(number+"="+number);
+        int size = 1;
+        for(int i= number/2;i > 0;i--){
+            int sum = i;
+            int next = i;
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            list.add(i);
+            while(sum < number){
+                next = next + 1;
+                list.add(next);
+                sum = sum + next;
+            }
+            if (sum == number){
+                size = size + 1;
+                System.out.print(number+"=");
+                for(int j = 0;j < list.size();j++){
+                    if(j == list.size() - 1){
+                        System.out.println(list.get(j));
+                    }else{
+                        System.out.print(list.get(j)+"+");
+                    }
+                }
+            }
+        }
+        System.out.println("Result:"+size);
+    }
+}
+5.2.63	滑动窗口最大和（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+有一个N个整数的数组，和一个长度为M的窗口，窗口从数组内的第一个数开始滑动直到窗口不能滑动为止，每次窗口滑动产生一个窗口和（窗口内所有数的和），求窗口滑动产生的所有窗口和的最大值。
+参考代码（Java）
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int len = in.nextInt();
+        int[] a=new int[len];
+        for (int i = 0; i < len; i++) {
+            a[i]=in.nextInt();
+        }
+        int win=in.nextInt();
+        int[] b=new int[len+1-win];
+        for (int i = 0; i < b.length; i++) {
+            for (int i1 = i; i1 <i+win; i1++) {
+                b[i]+=a[i1];
+            }
+        }
+        Arrays.sort(b);
+        System.out.println(b[b.length - 1]);
+    }
+}
+5.2.64	VLAN资源池（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+VLAN是一种对局域网设备进行逻辑划分的技术，为了标识不同的VLAN，引入VLAN ID(1-4094之间的整数)的概念。定义一个VLAN ID的资源池(下称VLAN资源池)，资源池中连续的VLAN用开始VLAN-结束VLAN表示，不连续的用单个整数表示，所有的VLAN用英文逗号连接起来。现在有一个VLAN资源池，业务需要从资源池中申请一个VLAN，需要你输出从VLAN资源池中移除申请的VLAN后的资源池。
+参考代码（Python）
+import sys
+if __name__ == "__main__":
+        a = sys.stdin.readline().strip()
+
+        all_in = a.split(',')
+        to_rm = int(sys.stdin.readline())
+
+        pool = [0 for _ in range(4094)]
+        for vls in all_in:
+        if vls.find('-') > 0:
+        st,ed = vls.split('-')
+        for i in range(int(st)-1,int(ed)):
+        pool[i] = 1
+        else:
+        pool[int(vls) -1] = 1
+        pool[int(to_rm)-1] = 0
+
+        #print
+        prt = []
+        last = 0
+        i = 0
+        while i < len(pool):
+        if pool[i] == 1:
+        s = i
+        while pool[i+1] == 1 and i < len(pool):
+        i+=1
+        if s == i:
+        prt.append(str(i+1))
+        i +=1
+        else:
+        prt.append('{}-{}'.format(s+1,i+1))
+        i +=1
+        else:
+        i +=1
+        print(",".join(prt))
+5.2.65	靠谱的车（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+程序员小明打了一辆出租车去上班。出于职业敏感，他注意到这辆出租车的计费表有点问题，总是偏大。
+
+出租车司机解释说他不喜欢数字4，所以改装了计费表，任何数字位置遇到数字4就直接跳过，其余功能都正常。
+
+比如：
+
+1.     23再多一块钱就变为25；
+
+2.     39再多一块钱变为50；
+
+3.     399再多一块钱变为500；
+
+小明识破了司机的伎俩，准备利用自己的学识打败司机的阴谋。
+给出计费表的表面读数，返回实际产生的费用。
+参考代码（Python）
+#coding=utf-8
+        # 本题为考试单行多行输入输出规范示例，无需提交，不计分。
+import sys
+for line in sys.stdin:
+        a = str(line.strip())
+        ret = 0
+        for i in range(len(a)):
+        n = int(a[i])
+        if n > 4:
+        n = n -1
+
+        ret += n*(9**(len(a) -i - 1))
+        print(ret)
+5.2.66	计算最大乘积（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个元素类型为小写字符串的数组，请计算两个没有相同字符的元素 长度乘积的最大值，如果没有符合条件的两个元素，返回0。
+参考代码（Java）
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String[] strs = in.nextLine().split(",");
+        int m = strs.length;
+        int sum = 0;
+        for(int i = 0; i < m; i++){
+            for(int j = i+1; j < m; j++){
+                if(!compareStr(strs[i], strs[j])){
+                    sum = Math.max(sum, strs[i].length() * strs[j].length());
+                }
+            }
+        }
+        System.out.println(sum);
+    }
+
+    public static boolean compareStr(String str1, String str2){
+        char[] chars1 = str1.toCharArray();
+        char[] chars2 = str2.toCharArray();
+        int m = chars1.length;
+        int n = chars2.length;
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(chars1[i] == chars2[j])
+                    return true;
+            }
+        }
+        return false;
+    }
+}
+5.2.67	数组拼接（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+现在有多组整数数组，需要将它们合并成一个新的数组。合并规则，从每个数组里按顺序取出固定长度的内容合并到新的数组中，取完的内容会删除掉，如果该行不足固定长度或者已经为空，则直接取出剩余部分的内容放到新的数组中，继续下一行。
+参考代码（Java）
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int m = Integer.parseInt(in.nextLine());
+        int n = Integer.parseInt(in.nextLine());
+
+        List<String[]> list = new ArrayList<String[]>();
+        String[] strs = new String[n];
+        int maxSize = 0;
+        for(int i = 0; i < n; i++){
+            strs[i] = in.nextLine();
+            maxSize = Math.max(maxSize, strs[i].length());
+            list.add(strs[i].split(","));
+        }
+        StringBuffer result = new StringBuffer();
+        int index = 0;
+        for(int j = index; j < maxSize; j += m){
+            for(String[] str: list){
+                if(str.length < j + m && str.length != 0){
+                    for(int i = j; i < str.length; i++){
+                        if(!str[i].equals("")){
+                            result.append(str[i]).append(",");
+                        }
+                    }
+                }
+                else{
+                    for(int i = j; i < j + m; i++){
+                        result.append(str[i]).append(",");
+                    }
+                }
+            }
+        }
+        System.out.println(result.substring(0, result.length()-1));
+    }
+
+}
+5.2.68	相对开音节（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+相对开音节构成的结构为辅音+元音（aeiou）+辅音(r除外)+e，常见的单词有bike、cake等。
+
+给定一个字符串，以空格为分隔符，反转每个单词中的字母，若单词中包含如数字等其他非字母时不进行反转。
+反转后计算其中含有相对开音节结构的子串个数（连续的子串中部分字符可以重复）。
+参考代码（Java）
+def getNums(word_list):
+        new_list = []
+        for word in word_list:
+        if word.isalpha():
+        new_list.append(word[::-1])
+        else:
+        new_list.append(word)
+        count = 0
+        new_str = " ".join(new_list)
+enum = ["a", "e", "i", "o", "u"]
+        for i in range(len(new_str) - 3):
+        start = i
+        end = i + 4
+        test_word = new_str[start:end]
+        if test_word[0].isalpha() and test_word[0] not in enum and test_word[1] in enum and \
+        test_word[2].isalpha() and test_word[2] not in enum and test_word[2] != "r" and test_word[3] == 'e':
+        count += 1
+        return count
+
+
+        if __name__ == "__main__":
+        word_list = input().split(" ")
+        print(getNums(word_list))
