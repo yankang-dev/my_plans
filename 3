@@ -1,1 +1,559 @@
-3
+5.2.44	高矮个子排队（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+现在有一队小朋友，他们高矮不同，我们以正整数数组表示这一队小朋友的身高，如数组{5,3,1,2,3}。
+我们现在希望小朋友排队，以“高”“矮”“高”“矮”顺序排列，每一个“高”位置的小朋友要比相邻的位置高或者相等；每一个“矮”位置的小朋友要比相邻的位置矮或者相等；
+要求小朋友们移动的距离和最小，第一个从“高”位开始排，输出最小移动距离即可。
+例如，在示范小队{5,3,1,2,3}中，{5, 1, 3, 2, 3}是排序结果。{5, 2, 3, 1, 3} 虽然也满足“高”“矮”“高”“矮”顺序排列，但小朋友们的移动距离大，所以不是最优结果。
+移动距离的定义如下所示：
+第二位小朋友移到第三位小朋友后面，移动距离为1，若移动到第四位小朋友后面，移动距离为2；
+参考代码（Java）
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
+        String str = null;
+
+        while ( (str=bf.readLine())!=null){
+            String[] strs=str.split(" ");
+            boolean flag=false;
+            int[] nums1=new int[strs.length];
+            for (int i=0;i<strs.length;i++){
+                if (strs[i].split("[a-zA-Z]").length>1 || ('0'>strs[i].charAt(0)||'9'<strs[i].charAt(0)  )){
+                    flag=true;
+                    break;
+                }
+                nums1[i]=Integer.parseInt(strs[i]);
+            }
+            if(flag){
+                System.out.println("[]");
+            }else {
+                replace(nums1);
+                for(int i:nums1){
+                    System.out.print(i+" ");
+                }
+                System.out.println();
+            }
+        }
+    }
+    private  static  int replace(int[] nums){
+        int result=0;
+        int len=0;
+        int temp=0;
+        while (len<nums.length-1){
+            if(len%2==0){
+                if(nums[len]>= nums[len+1]){
+                    len++;
+                    continue;
+                }else {
+                    result++;
+                    temp=nums[len];
+                    nums[len]=nums[len+1];
+                    nums[len+1]=temp;
+                }
+            }else if( len%2==1){
+                if(nums[len]<= nums[len+1]){
+                    len++;
+                    continue;
+                }else {
+                    result++;
+                    temp=nums[len];
+                    nums[len]=nums[len+1];
+                    nums[len+1]=temp;
+                }
+            }
+        }
+        return  result;
+    }
+}
+5.2.45	猴子爬山（*）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+一天一只顽猴想去从山脚爬到山顶，途中经过一个有个N个台阶的阶梯，但是这猴子有一个习惯： 每一次只能跳1步或跳3步，试问猴子通过这个阶梯有多少种不同的跳跃方式？
+参考代码（Java）  说明，此代码规范性不足，进行了扣分
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        in.close();
+        long[] k = new long[10000];
+        k[1] = 1;
+        k[2] = 1;
+        k[3] = 2;
+        for (int i = 4; i <= n; i++) {
+            k[i] = k[i - 1] + k[i - 3];
+        }
+        System.out.println(k[n]);
+    }
+}
+5.2.46	非严格递增连续数字序列（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+输入一个字符串仅包含大小写字母和数字，求字符串中包含的最长的非严格递增连续数字序列的长度（比如12234属于非严格递增连续数字序列）。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            String str = sc.next();
+            calc(str);
+        }
+    }
+
+    public static void calc(String str) {
+        char[] arr = str.toCharArray();
+        int pre = 0;
+        int max = 0;
+        int currentSize = 0;
+        for (char c : arr) {
+            if (48 <= c && c <= 57) {
+                if (c < pre) {
+                    currentSize = 0;
+                }
+                currentSize++;
+                //保存当前最大
+                if (currentSize > max) {
+                    max = currentSize;
+                }
+                pre = c;
+            } else {
+                currentSize = 0;
+                pre = 0;
+            }
+        }
+        System.out.println(max);
+    }
+}
+5.2.47	按身高和体重排队（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+某学校举行运动会，学生们按编号(1、2、3…n)进行标识，现需要按照身高由低到高排列，对身高相同的人，按体重由轻到重排列；对于身高体重都相同的人，维持原有的编号顺序关系。请输出排列后的学生编号
+参考代码（Java）
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+public class Main {
+    static class Student {
+        int height;
+        int weight;
+        int dex;
+
+        Student (int height, int weight, int dex) {
+            this.height = height;
+            this.weight = weight;
+            this.dex = dex;
+        }
+    }
+
+    static Student[] students;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int N = Integer.parseInt(sc.nextLine());
+        StringTokenizer st1 = new StringTokenizer(sc.nextLine());
+        StringTokenizer st2 = new StringTokenizer(sc.nextLine());
+
+        students = new Student[N];
+        for (int i = 0; i < N; i++) {
+            students[i] = new Student(Integer.parseInt(st1.nextToken()), Integer.parseInt(st2.nextToken()), i+1);
+        }
+
+        Arrays.sort(students, new Comparator<Student>() {
+            @Override
+            public int compare(Student o1, Student o2) {
+                return (o1.height == o2.height ? o1.weight - o2.weight : o1.height - o2.height);
+            }
+        });
+
+        System.out.print(students[0].dex);
+        for (int i = 1; i < N; i++) {
+            System.out.print(" " + students[i].dex);
+        }
+    }
+}
+5.2.48	一种字符串压缩表示的解压（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+有一种简易压缩算法：针对全部由小写英文字母组成的字符串，将其中连续超过两个相同字母的部分压缩为连续个数加该字母，其他部分保持原样不变。例如：字符串“aaabbccccd”经过压缩成为字符串“3abb4cd”。 请您编写解压函数，根据输入的字符串，判断其是否为合法压缩过的字符串，若输入合法则输出解压缩后的字符串，否则输出字符串“!error”来报告错误。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        String str = sc.nextLine();
+
+        String v2 = "\\d|[a-z]";
+
+        boolean isError = false;
+        String temp = str.replaceAll(v2, "");
+        if (temp.length() > 0) {
+            isError = true;
+        }
+
+        if (isError) {
+            System.out.println("!error");
+        } else {
+            StringBuffer buffer = new StringBuffer();
+            char[] chars = str.toCharArray();
+            int len = chars.length;
+            boolean isFigure = false;
+            char charTmp = 'A';
+            int count = 0;
+            for (int i = 0; i < len; i++) {
+                if (chars[i] >= '0' && chars[i] <= '9') {
+                    isFigure = true;
+                    if (i+1 >= len) {
+                        isError = true;
+                        break;
+                    }
+                } else if (chars[i] == charTmp) {
+                    count++;
+                    if (isFigure || count > 2) {
+                        isError = true;
+                        break;
+                    }
+                } else {
+                    charTmp = chars[i];
+                    count = 1;
+                    if (i-1 > 0 && (chars[i-1] >= 'a' && chars[i-1] <= 'z')) {
+                        isFigure = false;
+                    }
+                }
+            }
+
+            if (isError) {
+                System.out.println("!error");
+            } else {
+                String s;
+                int m;
+                for (int i = 0; i < len; i++) {
+                    s = "";
+                    while (i < len && chars[i] >= '0' && chars[i] <= '9') {
+                        s += chars[i];
+                        i++;
+                    }
+                    if ("".equals(s)) {
+                        buffer.append(chars[i]);
+                    } else {
+                        m = Integer.parseInt(s);
+                        if (m < 3) {
+                            isError = true;
+                            break;
+                        }
+                        append(buffer, m, chars[i]);
+                    }
+                }
+                if (isError) {
+                    System.out.println("!error");
+                } else {
+                    System.out.print(buffer.toString());
+                }
+            }
+        }
+    }
+
+    public static void append(StringBuffer buffer, int count, char c) {
+        for (int i = 0; i < count; i++) {
+            buffer.append(c);
+        }
+    }
+}
+5.2.49	字符串分割（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个非空字符串S，其被N个‘-’分隔成N+1的子串，给定正整数K，要求除第一个子串外，其余的子串每K个字符组成新的子串，并用‘-’分隔。对于新组成的每一个子串，如果它含有的小写字母比大写字母多，则将这个子串的所有大写字母转换为小写字母；反之，如果它含有的大写字母比小写字母多，则将这个子串的所有小写字母转换为大写字母；大小写字母的数量相等时，不做转换。
+参考代码（Java）
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        int K = scan.nextInt();
+        scan.nextLine();
+        String S = scan.nextLine();
+        doHandler(S, K);
+    }
+
+    /**
+     * 处理输入
+     * */
+    public static void doHandler(String S, int K){
+        String[] arrOfS = S.split("-");
+        int lengthOfArrOfS = arrOfS.length;
+        if(lengthOfArrOfS == 1){
+            System.out.println(S);
+        } else {
+            StringBuffer newBuffer = new StringBuffer();
+            newBuffer.append(arrOfS[0]).append("-");
+            String subStr = S.substring(S.indexOf("-") + 1).replaceAll("-", "");
+            newBuffer.append(getNewString(subStr, K));
+            System.out.println(newBuffer.toString());
+        }
+    }
+
+    /**
+     * 每K个字母切割字符串
+     * */
+    public static String getNewString(String param, int K){
+        StringBuffer returnStringBuffer = new StringBuffer();
+        int lengthOfParam = param.length();
+        int xunhuancishu = lengthOfParam%K > 0 ? lengthOfParam/K + 1 : lengthOfParam/K;
+        for(int i = 0; i < xunhuancishu; i ++){
+            int startIndex = i * K;
+            int endIndex = (i+1) * K > lengthOfParam ? lengthOfParam : (i+1) * K;
+            String newSubStr = param.substring(startIndex, endIndex);
+            returnStringBuffer.append(judgeCaseOfStr(newSubStr));
+            if(i < xunhuancishu-1){
+                returnStringBuffer.append("-");
+            }
+        }
+        return returnStringBuffer.toString();
+    }
+
+    /**
+     * 判断大小写
+     * */
+    public static String judgeCaseOfStr(String param){
+        char[] charArr = param.toCharArray();
+        int lowCaseCount = 0;
+        int upCaseCount = 0;
+        for(char c : charArr){
+            if(c > 96 && c < 123){//小写
+                lowCaseCount ++;
+            } else if(c < 91 && c > 64){
+                upCaseCount ++;
+            }
+        }
+        if(lowCaseCount > upCaseCount){
+            return param.toLowerCase();
+        } else if(lowCaseCount < upCaseCount){
+            return param.toUpperCase();
+        } else {
+            return param;
+        }
+    }
+}
+5.2.50	最长子字符串的长度（一）（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给你一个字符串 s，字符串s首尾相连成一个环形 ，请你在环中找出 'o' 字符出现了偶数次最长子字符串的长度。
+参考代码（Java）：
+import java.util.Scanner;
+
+public class Main {
+    /**
+     * 给定一个小写字母的字符串，字符串首尾相连成环
+     * 输入字母o出现偶数次的子串的最大长度
+     * */
+    public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        String S = scan.nextLine();
+        doHandler(S);
+    }
+
+    private static void doHandler(String S) {
+        if(S.indexOf("o") == -1){
+            System.out.println(S.length());
+        } else {
+            String[] arrSplitByFlag = S.split("o", -1);
+            if(arrSplitByFlag.length % 2 == 1){//说明有偶数个o，直接返回原长度
+                System.out.println(S.length());
+            } else {//说明有奇数个o，只要把其中一个o去掉即可
+                System.out.println(S.length() - 1);
+            }
+        }
+    }
+}
+5.2.51	最大N个数与最小N个数的和（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个数组，编写一个函数来计算它的最大N个数与最小N个数的和。你需要对数组进行去重。
+
+
+说明：
+       *数组中数字范围[0, 1000]
+       *最大N个数与最小N个数不能有重叠，如有重叠，输入非法返回-1
+*输入非法返回-1
+参考代码（C++）
+#include <string.h>
+        #include <vector>
+#include <iostream>
+using namespace std;
+        int main()
+        {
+        int m = 0, n = 0;
+        int z = 0;
+        vector<int> arr;
+        vector<int> arr2;
+        while (~scanf("%d", &m))
+        {
+        arr.clear();
+        for (int i = 0; i < m; ++i)
+        {
+        scanf("%d", &n);
+        arr.push_back(n);
+        }
+        if (arr.size() < m)
+        {
+        cout << -1 << endl;
+        continue;
+        }
+        scanf("%d", &n);
+        for (int i = 0; i < m; ++i)
+        {
+        for (int j = i + 1; j < m; ++j)
+        {
+        if (arr[i] >= arr[j])
+        {
+        int t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+        }
+        }
+        }
+        arr2.push_back(arr[0]);
+        for (int i = 1; i < m; ++i)
+        {
+        if (arr[i] != arr[i - 1]) arr2.push_back(arr[i]);
+        }
+        int sz = arr2.size();
+        if (sz < n * 2)
+        {
+        cout << -1 << endl;
+        continue;
+        }
+        z = 0;
+        for (int i = 0; i < n; ++i)
+        {
+        z += arr2[i];
+        }
+        for (int i = 0; i < n; ++i)
+        {
+        z += arr2[sz - 1 - i];
+        }
+        cout << z << endl;
+        }
+        return 0;
+        }
+5.2.52	玩牌高手（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个长度为n的整型数组，表示一个选手在n轮内可选择的牌面分数。选手基于规则选牌，请计算所有轮结束后其可以获得的最高总分数。选择规则如下：
+1、在每轮里选手可以选择获取该轮牌面，则其总分数加上该轮牌面分数，为其新的总分数。
+2、选手也可不选择本轮牌面直接跳到下一轮，此时将当前总分数还原为3轮前的总分数，若当前轮次小于等于3（即在第1、2、3轮选择跳过轮次），则总分数置为0。
+3、选手的初始总分数为0，且必须依次参加每一轮。
+#include<iostream>
+using namespace std;
+        int arr[100];
+        int dp[100];
+        int main()
+        {
+        string s;
+        cin>>s;
+        int cnt=0,num=0,flag=0;
+        for(int i=0;i<s.size();i++)
+        {
+        if(s[i]==',')
+        {
+        cnt++;
+        arr[cnt]=num;
+        if(flag) arr[cnt]=-arr[cnt];
+        num=0;
+        flag=0;
+        }
+        else
+        {
+        if(s[i]=='-') flag=1;
+        else
+        {
+        num=num*10+s[i]-'0';
+        }
+        }
+        }
+        cnt++;
+        arr[cnt]=num;
+        if(flag) arr[cnt]=-arr[cnt];
+        for(int i=0;i<=90;i++)
+        {
+        dp[i]=0;
+        }
+        for(int i=1;i<=cnt;i++)
+        {
+        if(i<=3) dp[i]=max(dp[i-1]+arr[i],0);
+        else dp[i]=max(dp[i-1]+arr[i],dp[i-3]);
+        }
+        cout<<dp[cnt]<<endl;
+
+        return 0;
+        }
+5.2.53	数字涂色（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+疫情过后，希望小学终于又重新开学了，三年二班开学第一天的任务是将后面的黑板报重新制作。黑板上已经写上了N个正整数，同学们需要给这每个数分别上一种颜色。为了让黑板报既美观又有学习意义，老师要求同种颜色的所有数都可以被这种颜色中最小的那个数整除。现在请你帮帮小朋友们，算算最少需要多少种颜色才能给这N个数进行上色。
+展开全部
+参考代码（Java）
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        List<Integer> numList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            numList.add(in.nextInt());
+        }
+        System.out.println(cal(n, numList));
+    }
+
+    private static int cal(int n, List<Integer> numList) {
+        Collections.sort(numList);
+        List<Integer> excludeList = new ArrayList<>();
+        int total = 0;
+        for (int i = 0; i < n; i++) {
+            if (excludeList.contains(i)){
+                continue;
+            }
+            total++;
+            excludeList.add(i);
+            int start = numList.get(i);
+            for (int j = i; j < n; j++) {
+                if (!excludeList.contains(j) && numList.get(j) % start == 0){
+                    excludeList.add(j);
+                }
+            }
+        }
+        return total;
+    }
+}
+5.2.54	快递运输（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+一辆运送快递的货车，运送的快递均放在大小不等的长方体快递盒中，为了能够装载更多的快递，同时不能让货车超载，需要计算最多能装多少个快递。
+注：快递的体积不受限制，快递数最多1000个，货车载重最大50000。
+参考代码（Python）
+import sys
+import re
+ 
+def slove(weights, limit):
+        if not weights:
+        return 0
+        weights.sort()
+        res = 0
+        for i in range(len(weights)):
+        if weights[i] > limit:
+        continue
+        limit -= weights[i]
+        res += 1
+        return res
+
+
+        if __name__ == "__main__":
+        input_str = sys.stdin.readline().strip()
+        weights = [int(c) for c in re.findall(r'\d+',input_str)]
+        limit = int(sys.stdin.readline().strip())
+        print(slove(weights, limit))
+     
+
