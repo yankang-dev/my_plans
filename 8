@@ -1,1 +1,179 @@
+5.2.100	最大值（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一组整数（非负），重排顺序后输出一个最大的整数。
 
+示例 1:
+输入: [10,9]
+输出: 910
+说明: 输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+参考代码（JavaScript）：
+while(line = readline()){
+        var nums = line.split(' ').map(e => parseInt(e))
+        if(nums.length ==0){
+        print('0')
+        continue
+        }
+        // 排序，将能组成最大头部的排在初始
+        nums.sort((x,y)=>{
+        var pre = x, aft=y
+        var pre10=10,aft10=10
+        while(pre10 <= pre){
+        pre10 = pre10*10
+        }
+        while(aft10 <=aft){
+        aft10 = aft10*10
+        }
+        // 得到前后两者组成头部是最大的情况
+        return (aft*pre10+pre) - (pre*aft10 +aft)
+        })
+        if(nums[0]=='0'){
+        print('0')
+        continue
+        }
+        var str = nums.join('')
+        print(str)
+        }
+
+5.2.101	可以组成网络的服务器（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+在一个机房中，服务器的位置标识在 n*m 的整数矩阵网格中，1 表示单元格上有服务器，0 表示没有。如果两台服务器位于同一行或者同一列中紧邻的位置，则认为它们之间可以组成一个局域网。
+请你统计机房中最大的局域网包含的服务器个数。
+参考代码（C++）：
+#include <iostream>
+#include <vector>
+using namespace std;
+
+        int gLen = 0;
+
+        void dfs(int i, int j, int n, int m, vector<vector<int>>& grid)
+        {
+        grid[i][j] = 2;
+        gLen++;
+        if (i+1<n && grid[i+1][j]==1)  dfs(i+1, j, n, m, grid);
+        if (i-1>=0 && grid[i-1][j]==1)  dfs(i-1, j, n, m, grid);
+        if (j+1<m && grid[i][j+1]==1)  dfs(i, j+1, n, m, grid);
+        if (j-1>=0 && grid[i][j-1]==1)  dfs(i, j-1, n, m, grid);
+        return;
+        }
+
+        int main()
+        {
+        int n, m, ans=0;
+        cin>>n>>m;
+        vector<vector<int>> grid(n, vector<int>(m));
+        for (int i=0; i<n; ++i)
+        {
+        for (int j=0; j<m; ++j)
+        {
+        cin>>grid[i][j];
+        }
+        }
+        for (int i=0; i<n; ++i)
+        {
+        for (int j=0; j<m; ++j)
+        {
+        if (grid[i][j]==1)
+        {
+        gLen = 0;
+        dfs(i, j, n, m, grid);
+        ans = max(ans, gLen);
+        }
+        }
+        }
+        cout<<ans<<endl;
+        return 0;
+        }
+
+5.2.102	找最小数（**）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给一个正整数NUM1，计算出新正整数NUM2，NUM2为NUM1中移除N位数字后的结果，需要使得NUM2的值最小。
+参考代码（JavaScript）：
+let num = readline();
+        let k = readline();
+        let final = [];
+        for(let i = 0;i < num.length;i++){
+        let number = num[i];
+
+        while(final.length > 0 && final[final.length - 1] > number && k > 0){
+final.pop();
+        k--
+        }
+
+        if(number != 0 || final.length !== 0){
+final.push(number);
+        }
+        }
+
+        while(k > 0){
+final.pop();
+        k--;
+        }
+        if(final.length){
+        print(Number(final.join('')));
+        }else{
+        print(0)
+        }
+
+5.2.103	叠积木（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+有一堆长方体积木，它们的宽度和高度都相同，但长度不一。小橙想把这堆积木叠成一面墙，墙的每层可以放一个积木，也可以将两个积木拼接起来，要求每层的长度相同。若必须用完这些积木，叠成的墙最多为多少层？
+
+如下是叠成的一面墙的图示，积木仅按宽和高所在的面进行拼接。
+ 
+参考代码（Java）：
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+public class Main {
+    public static void main(String[] args) {
+        TreeMap<Integer, Integer> countMap = new TreeMap<>();
+        int max = 0;
+        int min = Integer.MAX_VALUE;
+        int total = 0;
+
+        Scanner in = new Scanner(System.in);
+        while (in.hasNextInt()) {
+            int val = in.nextInt();
+            total += val;
+            max = Math.max(val, max);
+            min = Math.min(val, min);
+            if (countMap.containsKey(val)) {
+                countMap.put(val, countMap.get(val) + 1);
+            } else {
+                countMap.put(val, 1);
+            }
+        }
+        if (countMap.size() == 1) {
+            System.out.println(countMap.get(max));
+            return;
+        }
+        for (int i = total / max; i >= 2; i--) {
+            int isValid = total % i;
+            if (isValid != 0) {
+                continue;
+            }
+            int length = total / i;
+            AtomicBoolean valid = new AtomicBoolean(true);
+            Set<Integer> memo = new HashSet<>();
+            countMap.forEach((val, subCount) -> {
+                if (memo.contains(val)) {
+                    return;
+                }
+                if (length != val) {
+                    int left = length - val;
+                    Integer leftCount = countMap.get(left);
+                    if (leftCount == null) {
+                        valid.set(false);
+                    } else {
+                        memo.add(val);
+                        memo.add(left);
+                    }
+                }
+            });
+            if (valid.get()) {
+                System.out.println(i);
+                return;
+            }
+        }
+        System.out.println(-1);
+    }
+}
