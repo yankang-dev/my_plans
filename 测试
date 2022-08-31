@@ -151,3 +151,52 @@ public class Main{
         }
     }
 }
+5.2.5	判断一组不等式是否满足约束并输出最大差 （*）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+给定一组不等式，判断是否成立并输出不等式的最大差(输出浮点数的整数部分)，要求：1）不等式系数为double类型，是一个二维数组；2）不等式的变量为int类型，是一维数组；3）不等式的目标值为double类型，是一维数组；4）不等式约束为字符串数组，只能是：">",">=","<","<=","="，例如,不等式组：
+a11*x1+a12*x2+a13*x3+a14*x4+a15*x5<=b1;
+a21*x1+a22*x2+a23*x3+a24*x4+a25*x5<=b2;
+a31*x1+a32*x2+a33*x3+a34*x4+a35*x5<=b3;
+最大差=max{  (a11*x1+a12*x2+a13*x3+a14*x4+a15*x5-b1),   (a21*x1+a22*x2+a23*x3+a24*x4+a25*x5-b2),   (a31*x1+a32*x2+a33*x3+a34*x4+a35*x5-b3)  }，类型为整数(输出浮点数的整数部分)
+参考代码（C++）
+char *findchar(char *p, char c)
+        {
+        while (*p)
+        {
+        if (*p == c) break;
+        ++p;
+        }
+        return p;
+        }
+5.2.6	整型数组按个位值排序（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个非空数组（列表），其元素数据类型为整型，请按照数组元素十进制最低位从小到大进行排序，十进制最低位相同的元素，相对位置保持不变。
+当数组元素为负值时，十进制最低位等同于去除符号位后对应十进制值最低位。
+参考代码（Java）：
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+    static StringBuffer sb = new StringBuffer();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String strT;
+        while((strT=br.readLine())!=null){
+            String[] strs = strT.split(",");
+            for(int i=0; i<=9; i++){
+                ab(strs, i);
+            }
+            String str = sb.toString();
+            System.out.println(str.substring(0, str.length()-1));
+        }
+    }
+    public static void ab(String[] strs, int index){
+        for(int i=0; i<strs.length; i++){
+            String str = strs[i];
+            if(str.charAt(str.length()-1)-48==index){
+                sb.append(str).append(",");
+            }
+        }
+    }
+}
