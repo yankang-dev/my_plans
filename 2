@@ -1,1 +1,514 @@
-2
+5.2.33	组成最大数（*）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+小组中每位都有一张卡片，卡片上是6位内的正整数，将卡片连起来可以组成多种数字，计算组成的最大数字。
+输入描述:
+“,”号分割的多个正整数字符串，不需要考虑非数字异常情况，小组最多25个人
+输出描述:
+最大的数字字符串
+示例1
+输入
+22,221
+输出
+22221
+示例2
+输入
+4589,101,41425,9999
+输出
+9999458941425101
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String str = scanner.nextLine();
+        String[] strs = str.split(",");
+        if (strs.length > 25) {
+            return;
+        }
+        List<String> list = Arrays.asList(strs);
+        list.sort(new Comparator<String>() {
+            @Override
+            public int compare(String preStr, String nextStr) {
+                if (preStr.length() == nextStr.length()) {
+                    return nextStr.compareTo(preStr);
+                } else {
+                    return (nextStr + preStr).compareTo(preStr + nextStr);
+                }
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        list.forEach(sb::append);
+        System.out.println(sb);
+    }
+}
+5.2.34	拼接URL（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个URL前缀和URL后缀，通过","分割，需要将其连接为一个完整的URL，如果前缀结尾和后缀开头都没有“/”，需自动补上“/”连接符，如果前缀结尾和后缀开头都为“/”，需自动去重。
+约束：不用考虑前后缀URL不合法情况。
+参考代码（Java）：
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        if (in.hasNextLine()) {
+            String s =in.nextLine();
+            if(s != null ){
+                String[] aArr=s.split(",");
+                if(aArr.length == 0){
+                    System.out.println("/");
+                }else{
+                    String pre = aArr[0];
+                    String next= "";
+                    if(aArr.length > 1){
+                        next= aArr[1];
+                    }
+                    if(!pre.startsWith("/")){
+                        pre = "/"+pre;
+                    }
+                    if(!next.startsWith("/")){
+                        next = "/"+next;
+                    }
+                    String result = pre +next;
+                    result = result.replace("//","/");
+                    System.out.println(result);
+                }
+            }else{
+                System.out.println("/");
+            }
+        }else{
+            System.out.println("/");
+        }
+
+    }
+}
+5.2.35	磁盘容量排序（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+磁盘的容量单位常用的有M，G，T这三个等级，它们之间的换算关系为1T = 1024G，1G = 1024M，现在给定n块磁盘的容量，请对它们按从小到大的顺序进行稳定排序，例如给定5块盘的容量，1T，20M，3G，10G6T，3M12G9M排序后的结果为20M，3G，3M12G9M，1T，10G6T。注意单位可以重复出现，上述3M12G9M表示的容量即为3M+12G+9M，和12M12G相等。
+参考代码（Java）：
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner =  new Scanner(System.in);
+        int cap = scanner.nextInt();
+        CapInfo[] arrs = new CapInfo[cap];
+        for (int i = 0; i < cap; i++) {
+            arrs[i] = new CapInfo(scanner.next(), 0);
+        }
+        for (CapInfo ele : arrs) {
+            byte[] bytes = ele.cap.getBytes();
+            int start = 0;
+            int size = 0;
+            for (int i = 0; i < bytes.length; i++) {
+                if (bytes[i] == 'M') {
+                    size += Integer.parseInt(ele.cap.substring(start, i));
+                    start = i + 1;
+                } else if (bytes[i] == 'G') {
+                    size += Integer.parseInt(ele.cap.substring(start, i)) * 1024;
+                    start = i + 1;
+                } else if (bytes[i] == 'T') {
+                    size += Integer.parseInt(ele.cap.substring(start, i)) * 1024 * 1024;
+                    start = i + 1;
+                }
+            }
+            ele.size = size;
+        }
+        Arrays.sort(arrs, (o1, o2) -> {
+            if (o1.size < o2.size) {
+                return -1;
+            } else if (o1.size > o2.size) {
+                return 1;
+            }
+            return 0;
+        });
+        for (CapInfo ele : arrs) {
+            System.out.println(ele.cap);
+        }
+    }
+
+    static class CapInfo {
+        String cap;
+        int size;
+
+        public CapInfo (String cap, int size) {
+            this.cap = cap;
+            this.size = size;
+        }
+    }
+}
+5.2.36	寻找身高相近的小朋友（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+小明今年升学到小学一年级，来到新班级后发现其他小朋友们身高参差不齐，然后就想基于各小朋友和自己的身高差对他们进行排序，请帮他实现排序。
+参考代码（JavaScript）：
+let str
+
+        while (str = readline()){
+        let height = Number(str.split(' ')[0])
+
+        let obj = {}
+        readline().trim().split(' ').map(Number).map(el => {
+        let dlt = Math.abs(height - el)
+        if (!obj[dlt]) {
+        obj[dlt] = [el]
+        } else {
+        obj[dlt].push(el)
+        }
+        })
+
+        let list = []
+        for (let key in obj) {
+        list.push({ key: Number(key), list: obj[key] })
+        }
+
+        let res = []
+        list.sort((a, b) => a.key - b.key)
+        .map(el => res = [...res, ...el.list.sort((a, b) => a - b)])
+        console.log(res.join(' '))
+        }
+5.2.37	流水线（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+一个工厂有m条流水线，来并行完成n个独立的作业，该工厂设置了一个调度系统，在安排作业时，总是优先执行处理时间最短的作业。
+现给定流水线个数m，需要完成的作业数n, 每个作业的处理时间分别为t1,t2…tn。请你编程计算处理完所有作业的耗时为多少？
+当n>m时，首先处理时间短的m个作业进入流水线，其他的等待，当某个作业完成时，依次从剩余作业中取处理时间最短的进入处理。
+参考代码（JavaScript）：
+let str
+
+        while (str = readline()){
+        let length = Number(str.split(' ')[0])
+        let list = []
+
+        readline().trim().split(' ').map(Number).sort((a, b) => a - b).map(el => {
+        if (list.length < length) {
+        list.push(el)
+        } else {
+        let index = list.findIndex(e => e == Math.min(...list))
+        list[index] += el
+        }
+        })
+
+        console.log(Math.max(...list))
+        }
+5.2.38	火锅（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+入职后，导师会请你吃饭，你选择了火锅。
+火锅里会在不同时间下很多菜。
+不同食材要煮不同的时间，才能变得刚好合适。你希望吃到最多的刚好合适的菜，但是你的手速不够快，用m代表手速，每次下手捞菜后至少要过m秒才能再捞（每次只能捞一个）。
+那么用最合理的策略，最多能吃到多少刚好合适的菜？
+参考代码（JavaScript）：
+let nm
+
+        while (nm = readline()){
+        nm = nm.trim().split(' ').map(Number)
+        let n = nm[0]
+        let m = nm[1]
+
+        let set = new Set()
+        for (let i=0; i<n; i++){
+        let tmp = readline().trim().split(' ').map(Number)
+        set.add(tmp[0] + tmp[1])
+        }
+
+        let list = Array.from(set).sort((a, b) => a - b)
+        let list1 = []
+
+        for (let i = 0; i < list.length && list[i] - list[0] < m; i++) {
+        let cnt = 1
+        let cur = list[i]
+        for (let j = i + 1; j < list.length; j++) {
+        if (list[j] - cur >= m) {
+        cnt++
+        cur = list[j]
+        }
+        }
+        list1[i] = cnt
+        }
+        console.log(Math.max(...list1))
+        }
+5.2.39	分班（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+幼儿园两个班的小朋友在排队时混在了一起，每位小朋友都知道自己是否与前面一位小朋友是否同班，请你帮忙把同班的小朋友找出来。
+小朋友的编号为整数，与前一位小朋友同班用Y表示，不同班用N表示。
+参考代码（Java）：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+
+        Scanner sc = new Scanner(System.in);
+        String str = sc.nextLine();
+
+        String[] array = str.split(" ");
+
+        List<Integer> list1 = new ArrayList<>(); //一班
+        List<Integer> list2 = new ArrayList<>(); //二班
+
+        int nextClass = 1;
+
+        for(int i=array.length-1; i>=0; i--){
+
+            int num = Integer.parseInt(array[i].split("/")[0]);
+            String isSameClass = array[i].split("/")[1];
+
+            //检查是否合法
+            if(!( num > 0 && num <= 999) ){
+                System.out.println("ERROR");
+                return;
+            }
+
+            if(nextClass == 1){
+                list1.add(num);
+            }else if(nextClass == 2){
+                list2.add(num);
+            }
+
+            if(isSameClass.equals("N")){
+                if(nextClass == 1){
+                    nextClass = 2;
+                }else if(nextClass == 2){
+                    nextClass = 1;
+                }
+            }
+        }
+
+        Collections.sort(list1);
+        Collections.sort(list2);
+
+        if(list1.size() == 0){
+            list2.forEach(key->{
+                System.out.print(key + " ");
+            });
+            System.out.println();
+        }else if(list2.size() == 0){
+            list1.forEach(key->{
+                System.out.print(key + " ");
+            });
+            System.out.println();
+        }else{
+            if(list1.get(0) < list2.get(0)){
+                list1.forEach(key->{
+                    System.out.print(key + " ");
+                });
+                System.out.println();
+                list2.forEach(key->{
+                    System.out.print(key + " ");
+                });
+            }else{
+                list2.forEach(key->{
+                    System.out.print(key + " ");
+                });
+                System.out.println();
+                list1.forEach(key->{
+                    System.out.print(key + " ");
+                });
+            }
+        }
+    }
+}
+5.2.40	找车位（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+停车场有一横排车位，0代表没有停车，1代表有车。至少停了一辆车在车位上，也至少有一个空位没有停车。
+
+为了防剐蹭，需为停车人找到一个车位，使得距停车人的车最近的车辆的距离是最大的，返回此时的最大距离。
+参考代码（Java）：
+import java.util.*;
+
+public class Main {
+    public static int maxDis(int[] seats) {
+        int max = 0;
+        int count = 0;
+        for (int i = 0; i < seats.length; i++) {
+            if (seats[i] == 0) {
+                count++;
+                if (i == seats.length - 1) {
+                    if (count > max) {
+                        max = count;
+                        return max;
+                    }
+                }
+            } else {
+                if (count > max) {
+                    max = count;
+                }
+                count = 0;
+            }
+        }
+        int count1 = 0;
+        for (int i = 0; i < seats.length; i++) {
+            if (seats[i] == 0) {
+                count1++;
+            } else {
+                break;
+            }
+        }
+
+        int count2 = 0;
+        for (int i = 0; i < seats.length; i++) {
+            if (seats[i] == 0) {
+                count2++;
+            } else {
+                break;
+            }
+        }
+        int max1 = Math.max(count1, count2);
+        int max2 = 0;
+        if (max % 2 == 1) {
+            max2 = max / 2 + 1;
+        } else {
+            max2 = max / 2;
+        }
+        return max1 > max2 ? max1 : max2;
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String str = in.nextLine();
+        String[] strings = str.split(",");
+        int [] ints = new int[strings.length];
+        for (int k=0; k < strings.length; k++){
+            ints[k] = Integer.parseInt(strings[k]);
+        }
+        int  mun = maxDis(ints);
+        System.out.println(mun);
+    }
+}
+5.2.41	字符统计及重排（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给出一个仅包含字母的字符串，不包含空格，统计字符串中各个字母（区分大小写）出现的次数，并按照字母出现次数从大到小的顺序输出各个字母及其出现次数。如果次数相同，按照自然顺序进行排序，且小写字母在大写字母之前。
+参考代码（Java）：
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        while (sc.hasNext()) {
+            String s = sc.nextLine();
+            char[] chars = s.toCharArray();
+
+            Map<String, Integer> map = new TreeMap<>();
+            for (char aChar : chars) {
+                String s1 = aChar + "";
+                if (map.containsKey(s1)) {
+                    int count = map.get(s1);
+                    count++;
+                    map.put(s1, count);
+                } else {
+                    map.put(s1, 1);
+                }
+            }
+
+            StringBuffer sb = new StringBuffer();
+            map.entrySet().stream().sorted((a, b) -> {
+                String o1 = a.getKey();
+                String o2 = b.getKey();
+                int avl = a.getValue();
+                int bvl = b.getValue();
+                if (avl == bvl) {
+                    if (o1.matches("[A-Z]") && o2.matches("[A-Z]")) {
+                        return o1.compareTo(o2);
+                    }
+                    if (o1.matches("[a-z]") && o2.matches("[a-z]")) {
+                        return o1.compareTo(o2);
+                    }
+                    if (!(o1.matches("[A-Z]") && o2.matches("[A-Z]"))) {
+                        return -1;
+                    }
+                    return 0;
+                } else {
+                    return bvl - avl;
+                }
+            }).forEach(a -> {
+                String key = a.getKey();
+                int value = a.getValue();
+                sb.append(key + ":" + value + ";");
+            });
+            System.out.println(sb.toString());
+        }
+    }
+}
+5.2.42	计算最大乘积（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个元素类型为小写字符串的数组，请计算两个没有相同字符的元素 长度乘积的最大值，如果没有符合条件的两个元素，返回0。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+        String[] lines = line.split(",");
+        int length = lines.length;
+        if (length == 1) {
+            System.out.println(lines[0].length());
+        }
+        int max = 0;
+        for (int i = 0; i < length; i++) {
+            for (int j = i + 1; j < length; j++) {
+                String str1 = lines[i];
+                String str2 = lines[j];
+                int result = 0;
+                if (!isContainsAny(str1, str2)) {
+                    result = str1.length() * str2.length();
+                }
+                if (max < result) {
+                    max = result;
+                }
+            }
+        }
+        System.out.println(max);
+    }
+
+    public static boolean isContainsAny(String str1, String str2) {
+        if (str1 == null || str2 == null) {
+            return true;
+        }
+        for (char c : str2.toCharArray()) {
+            if (str1.contains(Character.toString(c))) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+5.2.43	计算最大乘积（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给定一个元素类型为小写字符串的数组，请计算两个没有相同字符的元素 长度乘积的最大值，如果没有符合条件的两个元素，返回0。
+参考代码（Java）：
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
+        String str = null;
+        while ( (str=bf.readLine())!=null){
+            String[] strs=str.split(",");
+            int sum=0;
+            for (int i=0;i<strs.length-1;i++){
+                for (int z=i+1;z<strs.length;z++){
+                    boolean flag=true;
+                    for(int y=0;y<strs[i].length();y++){
+                        if (strs[z].contains(strs[i].charAt(y)+"")) {
+                            flag=false;
+                            break;
+                        }
+                    }
+                    if(flag&&strs[z].length()*strs[i].length() >sum){
+                        sum=strs[z].length()*strs[i].length();
+                    }
+                }
+            }
+            System.out.println(sum);
+        }
+    }
+}
+
