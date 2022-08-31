@@ -1,1 +1,598 @@
-5
+5.2.69	找终点（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个正整数数组，设为nums，最大为100个成员，求从第一个成员开始，正好走到数组最后一个成员，所使用的最少步骤数。
+要求：
+1、第一步必须从第一元素开始，且1<=第一步的步长<len/2;（len为数组的长度，需要自行解析）。
+2、从第二步开始，只能以所在成员的数字走相应的步数，不能多也不能少, 如果目标不可达返回-1，只输出最少的步骤数量。
+3、只能向数组的尾部走，不能往回走。
+参考代码（C++）
+#include <iostream>
+#include <array>
+constexpr int len =100;
+        int Findend(std::array<int,len> arr,int n)
+        {
+        int min =100;
+        for (int i = 1;i < n/2;++i){
+        int path = 0;
+        for(int j=i;j<n;j+=arr[j]){
+        ++path;
+        if (j == n - 1){
+        min=min < path ? min : path;
+        break;
+        }
+        }
+        }
+        if (min==100){
+        return -1;
+        }
+        return min;
+        }
+        int main(void){
+        std::array<int,len> arr{};
+        int index = 0;
+        while(std::cin.peek()!='\n'){
+        std::cin>>arr[index++];
+        }
+        std::cout<<Findend(arr,index)<<std::endl;
+        return 0;
+        }
+5.2.70	素数之积（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+RSA加密算法在网络安全世界中无处不在，它利用了极大整数因数分解的困难度，数据越大，安全系数越高，给定一个32位正整数，请对其进行因数分解，找出是哪两个素数的乘积。
+参考代码（Java）
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        Long a = in.nextLong();
+        List<Long> ans=getAnwser(a);
+        if(ans.size()==2){
+            System.out.println(ans.get(0).toString()+" "+ans.get(1).toString());
+
+        }else{
+            System.out.println("-1"+" "+"-1");
+        }
+    }
+
+    private static List<Long> getAnwser(Long a) {
+        List<Long> ans=new ArrayList<>();
+        Long num=a;
+        Long k=1L;
+        while(num>1){
+            for(int i=2;i<=num;i++){
+                if(num%i==0){
+                    ans.add(Long.valueOf(i));
+                    k=Long.valueOf(i);
+                    break;
+                }
+            }
+            num=num/k;
+        }
+        return ans;
+    }
+}
+5.2.71	计算面积（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+绘图机器的绘图笔初始位置在原点（0, 0），机器启动后其绘图笔按下面规则绘制直线：
+1）尝试沿着横向坐标轴正向绘制直线，直到给定的终点值E。
+2）期间可通过指令在纵坐标轴方向进行偏移，并同时绘制直线，偏移后按规则1 绘制直线；指令的格式为X offsetY，表示在横坐标X 沿纵坐标方向偏移，offsetY为正数表示正向偏移，为负数表示负向偏移。
+
+给定了横坐标终点值E、以及若干条绘制指令，请计算绘制的直线和横坐标轴、以及 X=E 的直线组成图形的面积。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner c = new Scanner(System.in);
+        String commond = c.nextLine();
+        String[] comArr = commond.split(" ");
+        int comNum = Integer.valueOf(comArr[0]);
+        int xEnd = Integer.valueOf(comArr[1]);
+
+        long x = 0;
+        long y = 0;
+        long size = 0;
+        for (int i = 0; i < comNum; i++) {
+            String comStr = c.nextLine();
+            String[] comAr = comStr.split(" ");
+            long comX = Long.parseLong(comAr[0]);
+            long comY = Long.parseLong(comAr[1]);
+            long xDis = comX - x;
+            x = comX;
+            if(y>0){
+                size += (xDis * y);
+            }else {
+                size -= (xDis * y);
+            }
+            y += comY;
+        }
+
+        if(y>0){
+            size += (xEnd - x) * y;
+        }else {
+            size -= (xEnd - x) * y;
+        }
+        System.out.println(size);
+    }
+}
+5.2.72	停车场车辆统计（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+特定大小的停车场，数组cars[]表示，其中1表示有车，0表示没车。车辆大小不一，小车占一个车位（长度1），货车占两个车位（长度2），卡车占三个车位（长度3），统计停车场最少可以停多少辆车，返回具体的数目。
+参考代码（Java）
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        String line = in.nextLine();
+        String[] str = line.split(",");
+        int result = 0;
+        int result1 = 0;
+        for(int i=0; i<str.length; i++){
+            String temp = str[i];
+            if("1".equals(temp)){
+                result1++;
+                if(result1 == 3){
+                    result++;
+                    result1 = 0;
+                }
+            }else if("0".equals(temp)){
+                if(result1 > 0){
+                    result++;
+                    result1 = 0;
+                }
+            }else{
+                if(result1 > 0){
+                    result++;
+                    result1 = 0;
+                }
+            }
+        }
+        if(result1 > 0){
+            result++;
+            result1 = 0;
+        }
+
+        System.out.println(result);
+    }
+}
+5.2.73	内存资源分配（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+有一个简易内存池，内存按照大小粒度分类，每个粒度有若干个可用内存资源，用户会进行一系列内存申请，需要按需分配内存池中的资源，返回申请结果成功失败列表。分配规则如下：
+1、分配的内存要大于等于内存申请量，存在满足需求的内存就必须分配，优先分配粒度小的，但内存不能拆分使用。
+2、需要按申请顺序分配，先申请的先分配。
+3、有可用内存分配则申请结果为true，没有可用内存分配则返回false。
+注：不考虑内存释放。
+参考代码（C++）
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <regex>
+#include <sstream>
+using namespace std;
+
+
+        map<int, int> read() {
+        string  str;
+        cin >> str;
+        istringstream stream(regex_replace(str, regex("[:,]"), " "));
+        int s, c;
+        map<int, int> _map;
+        while (stream >> s >> c)
+        {
+        _map[s] = c;
+        }
+        return _map;
+        }
+
+        vector<int> read1() {
+        string  str;
+        cin >> str;
+        istringstream stream(regex_replace(str, regex(","), " "));
+        vector<int> arr;
+        int val;
+        while (stream >> val) {
+        arr.push_back(val);
+        }
+        return arr;
+        }
+
+        string get(map<int, int> &memory, int size) {
+        for (auto iter = memory.begin(); iter != memory.end(); ++iter) {
+        if (iter->second <= 0) continue;
+        if (iter->first >= size) {
+        iter->second -= 1;
+        return "true";
+        }
+        }
+        return "false";
+        }
+        int main()
+        {
+        auto all = read();
+        string res;
+        for (auto i : read1()) {
+        res += get(all, i);
+        res += ",";
+        }
+        if (!res.empty()) res.pop_back();
+        cout << res << endl;
+        return 0;
+        }
+5.2.74	英文输入法（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+主管期望你来实现英文输入法单词联想功能。需求如下：
+
+依据用户输入的单词前缀，从已输入的英文语句中联想出用户想输入的单词，按字典序输出联想到的单词序列，如果联想不到，请输出用户输入的单词前缀。
+
+注意：
+
+1.  英文单词联想时，区分大小写
+
+2.  缩略形式如”don't”，判定为两个单词，”don”和”t”
+
+3.  输出的单词序列，不能有重复单词，且只能是英文单词，不能有标点符号
+参考代码（Java）
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        fun00();
+    }
+
+    private static void fun00() {
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            String str = sc.nextLine();
+            String pre = sc.nextLine();
+            str = str.replaceAll("\'"," ");
+            str = str.replaceAll(","," ");
+            str = str.replaceAll("\\."," ");
+            str = str.replaceAll(":"," ");
+            str = str.replaceAll("!"," ");
+            str = str.replaceAll("\\?"," ");
+            str = str.replaceAll("\\("," ");
+            str = str.replaceAll("\\)"," ");
+            str = str.replaceAll("\""," ");
+            str = str.replaceAll("\\^"," ").replaceAll("\\*"," ");
+            str = str.replaceAll("@"," ").replaceAll("#"," ");
+            str = str.replaceAll("%"," ").replaceAll("\\$"," ");
+            String[] split = str.split(" ");
+            List<String> list = new ArrayList<>();
+            Set<String> set = new HashSet<>();
+            for (String tmp : split) {
+                if (tmp.startsWith(pre) && set.add(tmp)) {
+                    list.add(tmp);
+                }
+            }
+            Collections.sort(list);
+            if(list.isEmpty()){
+                System.out.println(pre);
+            }else {
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0 ; i < list.size() ; i++){
+                    sb.append(list.get(i)).append(" ");
+                }
+                System.out.println(sb.toString().trim());
+            }
+        }
+    }
+}
+5.2.75	勾股数元组（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+如果3个正整数(a,b,c)满足a2 + b2 = c2的关系，则称(a,b,c)为勾股数（著名的勾三股四弦五），为了探索勾股数的规律，我们定义如果勾股数(a,b,c)之间两两互质（即a与b，a与c，b与c之间均互质，没有公约数），则其为勾股数元祖（例如(3,4,5)是勾股数元祖，(6,8,10)则不是勾股数元祖）。请求出给定范围[N,M]内，所有的勾股数元祖。
+参考代码（Java）
+import java.util.Scanner;
+import java.lang.Math;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int n,m;
+        n = in.nextInt();
+        m = in.nextInt();
+        int flag = 0;
+        for(int i = n; i <= m; i++) {
+            for(int j = i+1; j <= m; j++) {
+                int num = i * i +j * j;
+                int a = (int)Math.sqrt(num);
+                if(a * a != num) {
+                    continue;
+                }
+                if(a < n | a > m) {
+                    continue;
+                }
+                if(getResult(i,j) == 1 && getResult(i, a) == 1 && getResult(a, j) == 1){
+                    System.out.println(i + " " + j + " " + a);
+                    flag = n;
+                }
+            }
+        }
+        if(flag == 0){
+            System.out.println("NA");
+        }
+    }
+
+    public static int getResult(int a, int b) {
+        if(b == 0){
+            return a;
+        }
+        return getResult(b, a % b);
+    }
+}
+5.2.76	数组二叉树（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+二叉树也可以用数组来存储，给定一个数组，树的根节点的值存储在下标1，对于存储在下标N的节点，它的左子节点和右子节点分别存储在下标2*N和2*N+1，并且我们用值-1代表一个节点为空。
+
+给定一个数组存储的二叉树，试求从根节点到最小的叶子节点的路径，路径由节点的值组成。
+参考代码（Java）
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Integer> array = new ArrayList<>();
+        String input = scanner.nextLine();
+        String[] s = input.split(" ");
+        int[] nums=new int[s.length];
+        for (int i=0;i<nums.length;i++){
+            array.add(Integer.parseInt(s[i]));
+        }
+        scanner.close();
+        fun(array);
+
+    }
+    private static int dfs(List<Integer> nums,int index){
+        if (isLeaf(nums,index)){
+            return index;
+        }else{
+            int i1 = dfs(nums,2 * index + 1);
+            int i2 = dfs(nums,2 * index + 2);
+            if  (i1>=nums.size() || nums.get(i1)== -1){
+                return i2;
+            }else if (i2>=nums.size() || nums.get(i2)== -1){
+                return i1;
+            }else {
+                return nums.get(i1) < nums.get(i2) ? i1 : i2;
+            }
+        }
+    }
+    private static boolean isLeaf(List<Integer> nums,int index){
+        return (2* index + 1 >= nums.size() || nums.get(2 * index + 1) == -1)
+                && (2* index + 2 >= nums.size() || nums.get(2 * index + 2) == -1);
+    }
+    private static void fun(List<Integer> nums){
+        int index = dfs(nums,0);
+        ArrayList<Integer> arr = new ArrayList<>();
+        while (index>0){
+            arr.add(nums.get(index));
+            index=(index - 1)/2;
+        }
+        arr.add(nums.get(0));
+
+        Collections.reverse(arr);
+        for (Integer integer : arr){
+            System.out.print(integer + " ");
+        }
+    }
+}
+5.2.77	字符串变换最小字符串（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个字符串s，最多只能进行一次变换，返回变换后能得到的最小字符串（按照字典序进行比较）。
+变换规则：交换字符串中任意两个不同位置的字符。
+参考代码（JavaScript）
+function find(array, start){
+        let index = start;
+        let len = array.length;
+        for(let i= start+1;i<len;i++){
+        if(array[i] <= array[index]){
+        index = i;
+        }
+        }
+
+        let mark = -1;
+        for(let i = start; i< index;i++){
+        if(array[i] > array[index]){
+        [array[i],array[index]] = [array[index],array[i]];
+        return len;
+        }
+        }
+        return index;
+        }
+
+        while(line = readline()){
+
+        let array = line.split('');
+        let m = find(array,0);
+        while(m!=array.length){
+        m = find(array, m+1);
+        }
+        print(array.join(''));
+        }
+5.2.78	出错的或电路（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+某生产门电路的厂商发现某一批次的或门电路不稳定，具体现象为计算两个二进制数的或操作时，第一个二进制数中某两个比特位会出现交换，交换的比特位置是随机的，但只交换这两个位，其他位不变。很明显，这个交换可能会影响最终的或结果，也可能不会有影响。为了评估影响和定位出错的根因，工程师需要研究在各种交换的可能下，最终的或结果发生改变的情况有多少种。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            int num = Integer.parseInt(scanner.nextLine());
+            String first = scanner.nextLine();
+            String second = scanner.nextLine();
+            long zeroCount = 0;
+            long oneCount = 0;
+            long firstZeroCount = 0;
+            long firstOneCount = 0;
+            for (int i = 0; i < num; i++) {
+                if (first.charAt(i) == 48) {
+                    if(second.charAt(i)==49){
+                        zeroCount++;
+                    }
+                } else {
+                    oneCount++;
+                }
+                if (second.charAt(i) == 48) {
+                    if (first.charAt(i) == 48) {
+                        firstZeroCount++;
+                    } else {
+                        firstOneCount++;
+                    }
+                }
+            }
+            System.out.println((zeroCount * firstOneCount) + (oneCount * firstZeroCount));
+        }
+    }
+}
+5.2.79	分积木（**）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+Solo和koko是两兄弟，妈妈给了他们一大堆积木，每块积木上都有自己的重量。现在他们想要将这些积木分成两堆。哥哥Solo负责分配，弟弟koko要求两个人获得的积木总重量“相等”（根据Koko的逻辑），个数可以不同，不然就会哭，但koko只会先将两个数转成二进制再进行加法，而且总会忘记进位（每个进位都忘记）。如当25（11101）加11（1011）时，koko得到的计算结果是18（10010）：
+ 11001
++01011
+--------
+ 10010
+Solo想要尽可能使自己得到的积木总重量最大，且不让koko哭。
+参考代码（C++）
+#include <iostream>
+#include <vector>
+#include <string>
+#include <limits.h>
+        #include <map>
+#include <algorithm>
+using namespace std;
+
+        int func(vector<int> &nums, int index)
+        {
+        int l = 0;
+        int r = 0;
+        for (int i = 0; i < index; i++) {
+        if (i == 0) {
+        l = nums[i];
+        } else {
+        l = l ^ nums[i];
+        }
+        }
+
+        int sum = 0;
+        for (int i = index; i < nums.size(); i++) {
+        sum += nums[i];
+        if (i == 0) {
+        r = nums[i];
+        } else {
+        r = r ^ nums[i];
+        }
+        }
+
+        if (l == r) {
+        return sum;
+        } else {
+        return -1;
+        }
+        }
+
+        int main()
+        {
+        int n = 0;
+
+        while (cin >> n) {
+        vector<int> nums(n, 0);
+        for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
+        }
+
+        sort(nums.begin(), nums.end());
+
+        int sum = 0;
+        //for (int i = 1; i < nums.size(); i++) {
+        cout << func(nums, 1) << endl;
+        //}
+
+        }
+
+        return 0;
+        }
+5.2.80	计算疫情扩散时间（**）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+在一个地图中(地图由n*n个区域组成），有部分区域被感染病菌。感染区域每天都会把周围（上下左右）的4个区域感染。
+
+请根据给定的地图计算，多少天以后，全部区域都会被感染。
+
+如果初始地图上所有区域全部都被感染，或者没有被感染区域，返回-1
+参考代码（JavaScript）
+let str = "";
+        while ((line = readline())) {
+        str = line;
+        }
+
+        const arr1 = str.split(",");
+        let hasZero = false,
+        hasOne = false;
+        const arr = [];
+        const all = arr1.length;
+        const n = Math.sqrt(all);
+        let temp = [];
+        let oneCount = 0;
+        arr1.forEach((v, i) => {
+        temp.push(v);
+        if (i % n === n - 1) {
+        arr.push(temp);
+        temp = [];
+        }
+        if (v == 1) {
+        hasOne = true;
+        oneCount++;
+        }
+        if (v == 0) hasZero = true;
+        });
+// console.log(arr);
+        if ((hasOne && !hasZero) || (!hasOne && hasZero)) {
+        console.log(-1);
+        } else {
+        let res = 0;
+        while (oneCount < all) {
+        let tempArr = [];
+        for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+        if (arr[i][j] == 1) {
+        // console.log(i, j);
+        if (arr[i - 1] !== undefined) {
+        if (arr[i - 1][j] == 0) {
+        arr[i - 1][j] = 2;
+        tempArr.push([i - 1, j]);
+        }
+        }
+        if (arr[i + 1] !== undefined) {
+        if (arr[i + 1][j] == 0) {
+        arr[i + 1][j] = 2;
+        tempArr.push([i + 1, j]);
+        }
+        }
+        if (arr[i][j - 1] !== undefined) {
+        if (arr[i][j - 1] == 0) {
+        arr[i][j - 1] = 2;
+        tempArr.push([i, j - 1]);
+        }
+        }
+        if (arr[i][j + 1] !== undefined) {
+        if (arr[i][j + 1] == 0) {
+        arr[i][j + 1] = 2;
+        tempArr.push([i, j + 1]);
+        }
+        }
+        }
+        }
+        }
+        for (let indexs of tempArr) {
+        arr[indexs[0]][indexs[1]] = 1;
+        oneCount++;
+        }
+        res++;
+        }
+        console.log(res);
+        }
+
