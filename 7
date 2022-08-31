@@ -1,1 +1,583 @@
-7
+5.2.93	二叉树遍历（**）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+根据给定的二叉树结构描述字符串，输出该二叉树按照中序遍历结果字符串。中序遍历顺序为：左子树，根结点，右子树。
+
+5.2.94	学生方阵（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+学校组织活动，将学生排成一个矩形方阵。请在矩形方阵中找到最大的位置相连的男生数量。这个相连位置在一个直线上，方向可以是水平的、垂直的、呈对角线的或者反对角线的。
+注：学生个数不会超过10000.
+参考代码（Python）：
+#!coding: utf8
+        def run(arr):
+        x = len(arr)
+        y = len(arr[0])
+        ret = [[[0,0,0,0] for j in range(y)] for i in range(x)]
+        for i, lst in enumerate(arr):
+        for j, v in enumerate(lst):
+        if v == 0:
+        ret[i][j] = [0,0,0,0]
+        continue
+
+        if i == 0 and j == 0:
+        ret[i][j] = [1,1,1,1] # 横 竖 斜 反斜
+        elif i == 0:
+        info = ret[i][j-1]
+        ret[i][j][0] = info[0] + 1
+        ret[i][j][1] = 1
+        ret[i][j][2] = 1
+        ret[i][j][3] = 1
+        elif j == 0:
+        info = ret[i-1][j]
+        ret[i][j][0] = 1
+        ret[i][j][1] = info[1] + 1
+        if j+1 < y:
+        ret[i][j][2] = ret[i-1][j+1][2] + 1
+        else:
+        ret[i][j][2] = 1
+        ret[i][j][3] = 1
+        else:
+        ret[i][j][0] = ret[i][j-1][0] + 1
+        ret[i][j][1] = ret[i-1][j][1] + 1
+        if j+1 < y:
+        ret[i][j][2] = ret[i-1][j+1][2] + 1
+        else:
+        ret[i][j][2] = 1
+        ret[i][j][3] = ret[i-1][j-1][3] + 1
+
+        maxVal = 0
+        for a in ret:
+        for lst in a:
+        v = max(lst)
+        if v > maxVal:
+        maxVal = v
+        return maxVal
+
+        if __name__ == '__main__':
+        numLine = raw_input()
+        [x, y] = numLine.split(',')
+        arr = []
+        x = int(x)
+        y = int(y)
+        for i in range(x):
+        l = []
+        line = raw_input()
+        vv = line.split(',')
+        for v in vv:
+        l.append(1 if v == 'M' else 0)
+        arr.append(l)
+        ret = run(arr)
+        print(ret)
+
+参考代码（C++）：
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+        int check1(vector<vector<int>>& mat, vector<vector<bool>>& mat1, int i, int j);
+        int check2(vector<vector<int>>& mat, vector<vector<bool>>& mat1, int i, int j);
+        int check3(vector<vector<int>>& mat, vector<vector<bool>>& mat1, int i, int j);
+        int check4(vector<vector<int>>& mat, vector<vector<bool>>& mat1, int i, int j);
+
+        int main()
+        {
+        string str;
+        char c;
+        int row, col;
+        getline(cin, str, ',');
+        row = stoi(str);
+        getline(cin, str, '\n');
+        col = stoi(str);
+        vector<vector<int>> mat;
+        vector<vector<bool>> mat1(row, vector<bool>(col, false));
+        vector<vector<bool>> mat2(row, vector<bool>(col, false));
+        vector<vector<bool>> mat3(row, vector<bool>(col, false));
+        vector<vector<bool>> mat4(row, vector<bool>(col, false));
+        for (int i = 0; i < row; i++)
+        {
+        vector<int> temp;
+        for (int j = 0; j < col - 1; j++)
+        {
+        cin >> c;
+        if (c == 'M')
+        {
+        temp.push_back(1);
+        }
+        else
+        {
+        temp.push_back(0);
+        }
+        cin >> c;
+        }
+        cin >> c;
+        if (c == 'M')
+        {
+        temp.push_back(1);
+        }
+        else
+        {
+        temp.push_back(0);
+        }
+        mat.push_back(temp);
+        }
+
+        int tmax = 0;
+        for (int i = 0; i < row; i++)
+        {
+        for (int j = 0; j < col; j++)
+        {
+        if (mat[i][j] == 1)
+        {
+        if (!mat1[i][j])
+        {
+        tmax = max(tmax, check1(mat, mat1, i, j));
+        }
+        if (!mat2[i][j])
+        {
+        tmax = max(tmax, check2(mat, mat2, i, j));
+        }
+        if (!mat3[i][j])
+        {
+        tmax = max(tmax, check3(mat, mat3, i, j));
+        }
+        if (!mat4[i][j])
+        {
+        tmax = max(tmax, check4(mat, mat4, i, j));
+        }
+        }
+        }
+        }
+        cout << tmax;
+        return 0;
+        }
+// 记录是否是横竖斜反斜中的元素，如果没有，则尝试
+        int check1(vector<vector<int>>& mat, vector<vector<bool>>& mat1, int i, int j)
+        {
+        // j++
+        int c = 0;
+        while (j < mat[0].size() && mat[i][j] == 1)
+        {
+        mat1[i][j] = true;
+        j++;
+        c++;
+        }
+        return c;
+        }
+        int check2(vector<vector<int>>& mat, vector<vector<bool>>& mat2, int i, int j)
+        {
+        // i++
+        int c = 0;
+        while (i < mat.size() && mat[i][j] == 1)
+        {
+        mat2[i][j] = true;
+        i++;
+        c++;
+        }
+        return c;
+        }
+        int check3(vector<vector<int>>& mat, vector<vector<bool>>& mat3, int i, int j)
+        {
+        // i+1,j+1
+        int c = 0;
+        while (i < mat.size() && j < mat[0].size() && mat[i][j] == 1)
+        {
+        mat3[i][j] = true;
+        i++;
+        j++;
+        c++;
+        }
+        return c;
+        }
+        int check4(vector<vector<int>>& mat, vector<vector<bool>>& mat4, int i, int j)
+        {
+        // i+1,j+1
+        int c = 0;
+        while (i < mat.size() && j >= 0 && mat[i][j] == 1)
+        {
+        mat4[i][j] = true;
+        i++;
+        j--;
+        c++;
+        }
+        return c;
+        }
+
+
+5.2.95	转骰子（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+骰子是一个立方体，每个面一个数字，初始为左1，右2，前3（观察者方向），后4，上5，下6，用123456表示这个状态，放置到平面上，可以向左翻转（用L表示向左翻转1次），可以向右翻转（用R表示向右翻转1次），可以向前翻转（用F表示向前翻转1次），可以向后翻转（用B表示向后翻转1次），可以逆时针旋转（用A表示逆时针旋转90度），可以顺时针旋转（用C表示顺时针旋转90度），现从123456这个初始状态开始，根据输入的动作序列，计算得到最终的状态。
+骰子的初始状态和初始状态转动后的状态如图所示
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        while(sc.hasNext()){
+            String result = "123456";
+            String str = sc.next();
+            for(int i=0; i<str.length(); i++){
+                char ch = str.charAt(i);
+                StringBuffer sb = new StringBuffer();
+                if(ch=='L'){
+                    sb.append(result.charAt(4)).append(result.charAt(5));
+                    sb.append(result.charAt(2)).append(result.charAt(3));
+                    sb.append(result.charAt(1)).append(result.charAt(0));
+                    result = sb.toString();
+                }
+                if(ch=='R'){
+                    sb.append(result.charAt(5)).append(result.charAt(4));
+                    sb.append(result.charAt(2)).append(result.charAt(3));
+                    sb.append(result.charAt(0)).append(result.charAt(1));
+                    result = sb.toString();
+                }
+                if(ch=='F'){
+                    sb.append(result.charAt(0)).append(result.charAt(1));
+                    sb.append(result.charAt(4)).append(result.charAt(5));
+                    sb.append(result.charAt(3)).append(result.charAt(2));
+                    result = sb.toString();
+                }
+                if(ch=='B'){
+                    sb.append(result.charAt(0)).append(result.charAt(1));
+                    sb.append(result.charAt(5)).append(result.charAt(4));
+                    sb.append(result.charAt(2)).append(result.charAt(3));
+                    result = sb.toString();
+                }
+                if(ch=='A'){
+                    sb.append(result.charAt(3)).append(result.charAt(2));
+                    sb.append(result.charAt(0)).append(result.charAt(1));
+                    sb.append(result.charAt(4)).append(result.charAt(5));
+                    result = sb.toString();
+                }
+                if(ch=='C'){
+                    sb.append(result.charAt(2)).append(result.charAt(3));
+                    sb.append(result.charAt(1)).append(result.charAt(0));
+                    sb.append(result.charAt(4)).append(result.charAt(5));
+                    result = sb.toString();
+                }
+            }
+            System.out.println(result);
+        }
+        sc.close();
+    }
+}
+5.2.96	仿LISP运算（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+LISP语言唯一的语法就是括号要配对。
+形如 (OP P1 P2 ...)，括号内元素由单个空格分割。
+其中第一个元素OP为操作符，后续元素均为其参数，参数个数取决于操作符类型
+注意：参数 P1, P2 也有可能是另外一个嵌套的 (OP P1 P2 ...)
+当前OP类型为 add / sub / mul / div（全小写），分别代表整数的加减乘除法
+简单起见，所有 OP 参数个数均为 2
+举例:
+- 输入：(mul 3 -7) 输出：-21
+- 输入：(add 1 2) 输出：3
+- 输入：(sub (mul 2 4) (div 9 3)) 输出：5
+- 输入：(div 1 0) 输出：error
+题目涉及数字均为整数，可能为负；不考虑32位溢出翻转，计算过程中也不会发生32位溢出翻转
+除零错误时，输出 "error"，除法遇除不尽，向下取整，即 3/2 = 1
+参考代码（Python）：
+import sys
+def calculate(origin_str):
+        op_stack = list()
+        num = list()
+        str_len = len(origin_str)
+        i = 0
+        while i < str_len:
+        if origin_str[i] == "(":
+        operator = origin_str[i+1:i+4]
+        op_stack.append(operator)
+        i = i + 4
+        elif origin_str[i] == ")":
+        operator = op_stack.pop()
+        next = num.pop()
+        pre = num.pop()
+        if operator == "mul":
+        num.append(pre * next)
+        elif operator == "add":
+        num.append(pre + next)
+        elif operator == "sub":
+        num.append(pre - next)
+        else:
+        if next == 0:
+        return "error"
+        num.append(pre // next)
+        elif "0"<= origin_str[i] <= "9" or origin_str[i] == "-":
+        index = i
+        while "0"<= origin_str[i] <= '9' or origin_str[i] == "-":
+        i += 1
+        num.append(int(origin_str[index:i].strip()))
+        continue
+        i += 1
+        return num[0]
+
+        if __name__ == "__main__":
+        origin_str = sys.stdin.readline().strip()
+        result = calculate(origin_str)
+        print(result)
+
+5.2.97	篮球比赛（**）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+篮球（5V5）比赛中，每个球员拥有一个战斗力，每个队伍的所有球员战斗力之和为该队伍的总体战斗力。现有10个球员准备分为两队进行训练赛，教练希望2个队伍的战斗力差值能够尽可能的小，以达到最佳训练效果。给出10个球员的战斗力，如果你是教练，你该如何分队，才能达到最佳训练效果？请输出该分队方案下的最小战斗力差值。
+参考代码（Java）
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+public class Main{
+    public static void main(String[] args)throws Exception{
+        BufferedReader bf=new BufferedReader(new InputStreamReader(System.in));
+        String[] s=bf.readLine().split(" ");
+        int[] r=new int [s.length];
+        for(int i=0;i<r.length;i++){
+            r[i]=Integer.parseInt(s[i]);
+        }
+        Arrays.sort(r);//获得战斗力递增数列
+        int num1=0;
+        int num2=0;
+        int sum=0;
+        int min=10000;
+        for(int e=0;e<10;e++){
+            sum+=r[e];
+        }
+        for(int i=0;i<10;i++){
+            for(int j=0;j<10;j++){
+                if(j==i)continue;
+                for(int k=0;k<10;k++){
+                    if(k==j||k==i)continue;
+                    for(int h=0;h<10;h++){
+                        if(h==k||h==j||h==i)continue;
+                        for(int l=0;l<10;l++){
+                            if(l==h||l==k||l==j||l==i){
+                                continue;
+                            }else {
+                                num1=r[i]+r[j]+r[k]+r[h]+r[l];
+                                num2=sum-num1;
+                                if(num2>=num1){
+                                    if(min>(num2-num1))
+                                    {
+                                        min=num2-num1;
+                                    }
+                                }else if(min>(num1-num2))min=num1-num2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.print(min);
+    }
+}
+5.2.98	贪吃蛇（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+贪吃蛇是一个经典游戏，蛇的身体由若干方格连接而成，身体随蛇头移动。蛇头触碰到食物时，蛇的长度会增加一格。蛇头和身体的任一方格或者游戏版图边界碰撞时，游戏结束。
+下面让我们来完成贪吃蛇游戏的模拟。给定一个N*M的数组arr，代表N*M个方格组成的版图，贪吃蛇每次移动一个方格。若arr[i][j] == 'H'，表示该方格为贪吃蛇的起始位置；若arr[i][j] == 'F'，表示该方格为食物，若arr[i][j] == 'E'，表示该方格为空格。
+贪吃蛇初始长度为1，初始移动方向为向左。为给定一系列贪吃蛇的移动操作，返回操作后蛇的长度，如果在操作执行完之前已经游戏结束，返回游戏结束时蛇的长度。
+
+贪吃蛇移动、吃食物和碰撞处理的细节见下面图示：
+ 
+图1：截取了贪吃蛇移动的一个中间状态，H表示蛇头，F表示食物，数字为蛇身体各节的编号，蛇为向左移动，此时蛇头和食物已经相邻
+图2：蛇头向左移动一格，蛇头和食物重叠，注意此时食物的格子成为了新的蛇头，第1节身体移动到蛇头位置，第2节身体移动到第1节身体位置，以此类推，最后添加第4节身体到原来第3节身体的位置。
+图3：蛇头继续向左移动一格，身体的各节按上述规则移动，此时蛇头已经和边界相邻，但还未碰撞。
+图4：蛇头继续向左移动一格，此时蛇头已经超过边界，发生碰撞，游戏结束。
+图5和图6给出一个蛇头和身体碰撞的例子，蛇为向上移动。图5时蛇头和第7节身体相邻，但还未碰撞；图6蛇头向上移动一格，此时蛇头和第8节身体都移动到了原来第7节身体的位置，发生碰撞，游戏结束。
+输入描述:
+输入第一行为空格分隔的字母，代表贪吃蛇的移动操作。字母取值为U、D、L、R和G，U、D、L、R分别表示贪吃蛇往上、下、左、右转向，转向时贪吃蛇不移动，G表示贪吃蛇按当前的方向移动一格。用例保证输入的操作正确。第二行为空格分隔的两个数，指定N和M，为数组的行和列数。余下N行每行是空格分隔的M个字母。字母取值为H、F和E，H表示贪吃蛇的起始位置，F表示食物，E表示该方格为空。用例保证有且只有一个H，而F和E会有多个。
+输出描述:
+输出一个数字，为蛇的长度。
+示例1
+输入
+D G G
+3 3
+F F F
+F F H
+E F E
+输出
+1
+说明
+贪吃蛇一开始就向下转向并且移动两步，此时蛇头已经和边界碰撞，游戏结束，蛇没有吃任何食物，故长度为1
+参考代码（Python）
+import sys
+ 
+stdIn = list(sys.stdin)
+        moveList = stdIn[0].strip().split(' ')
+        size = stdIn[1].split(' ')
+        m,n = int(size[0]), int(size[1])
+        mapList = []
+        snake = []
+        direaction = (0,-1)
+        for i in range(m):
+        mapList.append(stdIn[i+2].strip().split(' '))
+        for i in range(m):
+        for j in range(n):
+        if mapList[i][j] == 'H':
+        snake.append((i,j))
+
+        for move in moveList:
+        if move == 'U':
+        direaction = (-1,0)
+        elif move == 'D':
+        direaction = (1,0)
+        elif move == 'L':
+        direaction = (0,-1)
+        elif move == 'R':
+        direaction = (0,1)
+        elif move == 'G':
+        step = (snake[0][0] + direaction[0],snake[0][1] + direaction[1])
+        if step[0] < 0 or step[0]>= m or step[1]<0 or step[1]>=n:
+        print(len(snake))
+        exit()
+        if mapList[step[0]][step[1]] == 'F':
+        mapList[step[0]][step[1]] = 'E'
+        snake.insert(0, step)
+        else:
+        if len(snake) == 1:
+        snake[0] = step
+        else:
+        del snake[-1]
+        snake.insert(0, step)
+        # 发生身体碰撞
+        if snake[0] in snake[1:]:
+        print(len(snake))
+        exit()
+        print(len(snake))
+5.2.99	数字排列（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+小明负责公司年会，想出一个趣味游戏：
+屏幕给出1～9中任意3个不重复的数字，大家以最快时间给出这几个数字可拼成的数字从小到大排列位于第N位置的数字，其中N为给出的数字中最大的（如果不到这么多个数字则给出最后一个即可）。
+注意：
+1）2可以当做5来使用，5也可以当做2来使用进行数字拼接，且屏幕不能同时给出2和5；
+2）6可以当做9来使用，9也可以当做6来使用进行数字拼接，且屏幕不能同时给出6和9。
+
+如给出：1，4，8，则可以拼成的数字为：
+1，4，8，14，18，41，48，81，84，148，184，418，481，814，841
+那么最第N（即8）个的数字为81。
+
+输入描述:
+输入为以逗号分隔的描述3个int类型整数的字符串。
+输出描述:
+输出为这几个数字可拼成的数字从小到大排列位于第N（N为输入数字中最大的数字）位置的数字，如果输入的数字不在范围内或者有重复，则输出-1。
+示例1
+输入
+1,4,8
+输出
+81
+说明
+可以构成的数字按从小到大排序为1，4，8，14，18，41，48，81，84，148，184，418，481，814，841，故第8个为81
+参考代码（Java）
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+
+public class Main {
+    public static void addThreeNumbers(ArrayList<Integer> lst, int a, int b, int c) {
+        lst.add(a);
+        lst.add(b);
+        lst.add(c);
+        lst.add(a * 10 + b);
+        lst.add(a * 10 + c);
+        lst.add(b * 10 + a);
+        lst.add(b * 10 + c);
+        lst.add(c * 10 + a);
+        lst.add(c * 10 + b);
+
+        lst.add(a * 100 + b * 10 + c);
+        lst.add(a * 100 + c * 10 + b);
+        lst.add(b * 100 + a * 10 + c);
+        lst.add(b * 100 + c * 10 + a);
+        lst.add(c * 100 + b * 10 + a);
+        lst.add(c * 100 + a * 10 + b);
+    }
+
+    public static void remove(ArrayList<Integer> lst) {     //去除重复数字
+        Set<Integer> set = new HashSet<Integer>();
+        for(Integer x : lst)
+            set.add(x);
+        lst.removeAll(lst);
+        for(Integer x : set)
+            lst.add(x);
+    }
+
+    public static boolean check(String line) {        //判断输入的字符是否为合法的字符：只能为数字和，
+        for(int i = 0; i < line.length(); i++) {
+            char ch = line.charAt(i);
+            if(!(Character.isDigit(ch) || ch == ','))
+                return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        String line = scan.nextLine();
+        String[] numbers = line.split(",");
+        if(!check(line) || numbers.length != 3) {
+            System.out.println(-1);
+            return;
+        }
+        int a = 0, b = 0, c = 0;
+        try{
+            a = Integer.parseInt(numbers[0]);
+            b = Integer.parseInt(numbers[1]);
+            c = Integer.parseInt(numbers[2]);
+        } catch(Exception ex) {
+            System.out.println(-1);
+            return;
+        }
+
+        if(a <= 0 || a > 9 || b <= 0 || b > 9 || c <= 0 || c > 9) {
+            System.out.println(-1);
+            return;
+        }
+
+        if(a == b || a == c || b == c) {       //判断是否有相同数字的情况
+            System.out.println(-1);
+            return;
+        }
+
+        Set<Integer> s = new HashSet<Integer>();    //判断是否有同时存在2和5、6和9的情况
+        s.add(a); s.add(b); s.add(c);
+        if((s.contains(2) && s.contains(5)) || (s.contains(6) && s.contains(9))) {
+            System.out.println(-1);
+            return;
+        }
+        //        int m = -1;
+        //        if(s.contains(2))
+        //            m = 5;
+        //        if(s.contains(6))
+        //            m = 9;
+
+        int max = Math.max(a, Math.max(c, b));
+
+        ArrayList<Integer> lst = new ArrayList<Integer>();
+
+        addThreeNumbers(lst, a, b, c);          // 对2和5、6和9的转换
+        if(a == 2 || a == 5)
+            addThreeNumbers(lst, 7 - a, b, c);
+        if(b == 2 || b == 5)
+            addThreeNumbers(lst, a, 7 - b, c);
+        if(c == 2 || c == 5)
+            addThreeNumbers(lst, a, b, 7 - c);
+
+        if(a == 6 || a == 9)
+            addThreeNumbers(lst, 15 - a, b, c);
+        if(b == 6 || b == 9)
+            addThreeNumbers(lst, a, 15 - b, c);
+        if(c == 6 || c == 9)
+            addThreeNumbers(lst, a, b, 15 - c);
+
+        //考虑2和6、9或者5和6、9同时存在的情况
+        if((s.contains(2) || s.contains(5)) && (s.contains(6) || s.contains(9))) {
+            int x = s.contains(2)? 2 : 5;
+            int y = s.contains(6)? 6 : 9;
+            int z = a + b + c - x - y;
+            addThreeNumbers(lst, 7 - x, 15 - y, z);
+        }
+
+        remove(lst);
+
+        Collections.sort(lst);
+        //        System.out.println(lst);
+        System.out.println(lst.get(max - 1));
+    }
+}
