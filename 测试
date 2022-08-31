@@ -200,3 +200,81 @@ public class Main {
         }
     }
 }
+5.2.7	事件推送（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+同一个数轴X上有两个点的集合A={A1, A2, …, Am}和B={B1, B2, …, Bn}，Ai和Bj均为正整数，A、B已经按照从小到大排好序，A、B均不为空，给定一个距离R(正整数)，列出同时满足如下条件的所有（Ai, Bj）数对： 
+1）Ai <= Bj   
+2）Ai, Bj之间的距离小于等于R
+3）在满足1）2）的情况下，每个Ai只需输出距离最近的Bj
+4）输出结果按Ai从小到大的顺序排序
+i = 0
+j = 0
+while i < len(A) and j < len(B)
+  if A[i]>B[j]
+    j++
+    continue
+  if B[j] - A[i] < R
+    print A[i],B[j]
+  i++
+5.2.8	求解连续数列（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+已知连续正整数数列{K}=K1,K2,K3...Ki的各个数相加之和为S，i=N (0<S<100000, 0<N<100000), 求此数列K
+5.2.9	太阳能板最大面积（*）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+给航天器一侧加装长方形或正方形的太阳能板（图中的红色斜线区域），需要先安装两个支柱（图中的黑色竖条），再在支柱的中间部分固定太阳能板。但航天器不同位置的支柱长度不同，太阳能板的安装面积受限于最短一侧的那根支柱长度。如图：
+ 提供一组整形数组的支柱高度数据，假设每根支柱间距离相等为1个单位长度，计算如何选择两根支柱可以使太阳能板的面积最大。
+5.2.10	数组组成的最小数字（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个整型数组，请从该数组中选择3个元素组成最小数字并输出（如果数组长度小于3，则选择数组中所有元素来组成最小数字）。
+参考代码（Java）：
+import java.util.*;
+
+public class Main {
+    //分隔符
+    public static final String SPLIT_STR = ",";
+    //默认长度
+    public static final int LENGTH = 3;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String str = sc.next();
+        if(str.contains(SPLIT_STR)){
+            String[] params = str.split(SPLIT_STR);
+            List<Integer> temps = new ArrayList<>();
+            for (String param : params) {
+                try {
+                    temps.add(Integer.parseInt(param));
+                }catch (NumberFormatException e){
+                    //TODO
+                }
+            }
+            Collections.sort(temps);
+            List<String> temps2 = new ArrayList<>();
+            //如果长度小于三
+            if(temps.size() < LENGTH){
+                for (Integer target : temps) {
+                    temps2.add(target.toString());
+                }
+            }else{
+                for (int j = 0; j < 3; j++) {
+                    temps2.add(temps.get(j).toString());
+                }
+            }
+            Collections.sort(temps2);
+            String result = "";
+            for (String s : temps2) {
+                result += s;
+            }
+            System.out.println(result);
+        }else {
+            System.out.println(str);
+        }
+    }
+}
+
+5.2.11	最长元音子串的长度（*）
+最长元音子串的长度
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+定义：当一个字符串只有元音字母（aeiouAEIOU）组成，称为元音字符串。
+现给定一个字符串，请找出其中最长的元音字符子串，并返回其长度；如果找不到，则返回0。
+子串：字符串中任意个连续的字符组成的子序列称为该字符串的子串。
+参考代码（JAVA）：
