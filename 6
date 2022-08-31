@@ -1,1 +1,555 @@
-6
+5.2.81	字符匹配（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给你一个字符串数组（每个字符串均由小写字母组成）和一个字符规律（由小写字母和.和*组成），识别数组中哪些字符串可以匹配到字符规律上。
+
+
+'.' 匹配任意单个字符，'*' 匹配零个或多个前面的那一个元素，所谓匹配，是要涵盖整个字符串的，而不是部分字符串。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] agrs){
+        Scanner sc =new Scanner(System.in);
+        String[] str=sc.nextLine().split(" ");
+        String c=sc.nextLine();
+        String sys="";
+        for(int i=0;i<str.length;i++){
+            if(bfs(str[i],c)){
+                sys+=i+",";
+            }
+
+        }
+        System.out.println(sys.substring(0,sys.length()-1));
+
+    }
+
+    private static boolean bfs(String s, String c) {
+        if(c.equals("")){
+            if(s.equals("")){
+                return true;
+            }else {
+                return false;
+            }
+
+        }
+        if(s.equals("")){
+            if(c.charAt(0)=='*'){
+                return bfs(s,c.substring(1,c.length()));
+            }else {
+                return false;
+            }
+        }
+        if(c.charAt(0)=='*'){
+            for(int j=0;j<=s.length();j++){
+                if(bfs(s.substring(j,s.length()),c.substring(1,c.length()))){
+                    return true;
+                }
+            }
+        }else if(c.charAt(0)=='.'||c.charAt(0)==s.charAt(0)){
+            return bfs(s.substring(1,s.length()),c.substring(1,c.length()));
+        }
+        return false;
+
+    }
+
+}
+
+5.2.82	找到它（**）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+找到它是个小游戏，你需要在一个矩阵中找到给定的单词。假设给定单词HELLOWORLD，在矩阵中只要能找到H->E->L->L->O->W->O->R->L->D连成的单词，就算通过。
+
+注意区分英文字母大小写,并且你只能上下左右行走，不能走回头路。
+参考代码（Java）
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        String[] split = scanner.nextLine().split(" ");
+        int M = Integer.parseInt(split[0]);
+        int N = Integer.parseInt(split[1]);
+
+        String W = scanner.nextLine();
+        char[][] matrix = new char[M][N];
+        for(int i=0;i<matrix.length;i++) {
+            matrix[i] = scanner.nextLine().toCharArray();
+        }
+        scanner.close();
+
+        String res = exist(matrix,W);
+        System.out.println(res);
+    }
+
+    private static String exist(char[][] board, String word) {
+
+        int h = board.length,w = board[0].length;
+        boolean[][] visit = new boolean[h][w];
+        for(int i= 0;i<h;i++) {
+            for(int j=0;j<w;j++) {
+                boolean flag = check(board,visit,i,j,word,0);
+                if(flag) {
+                    return (i+1)+" "+(j+1);
+                }
+            }
+        }
+        return "NO";
+    }
+
+    private static boolean check(   char[][] board,
+                                    boolean[][] visited,
+                                    int i,
+                                    int j,
+                                    String s,
+                                    int k) {
+
+        if(board[i][j] != s.charAt(k)) {
+            return false;
+        }else if(k == s.length()-1){
+            return true;
+        }
+        visited[i][j] = true;
+        int[][] directions = {{0,1},{0,-1},{1,0},{-1,0}};
+        boolean result =false;
+        for(int[] dir:directions) {
+            int newi = i+dir[0],newj = j+dir[1];
+            if(newi >=0 && newi<board[0].length && newj>=0 && newj<board[0].length) {
+                if(!visited[newi][newj]) {
+                    boolean flag = check(board,visited,newi,newj,s,k+1);
+                    if(flag) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+        }
+        visited[i][j] =false;
+        return result;
+    }
+
+}
+
+5.2.83	求满足条件的最长子串的长度（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+ 给定一个字符串，只包含字母和数字，按要求找出字符串中的最长（连续）子串的长度，字符串本身是其最长的子串，子串要求：
+
+1、 只包含1个字母(a~z, A~Z)，其余必须是数字；
+
+2、 字母可以在子串中的任意位置；
+
+如果找不到满足要求的子串，如全是字母或全是数字，则返回-1。
+参考代码（Python）
+while True:
+        try:
+        string = input()
+        if string.isalpha() or string.isdigit():
+        print(-1)
+        break
+
+        lst = [0] * len(string)
+        for i, s in enumerate(string):
+        if s.isalpha():
+        temp_sum = 0
+        j , k = i-1, i+1
+        while True:
+        if j >= 0 and string[j].isdigit():
+        temp_sum += 1
+        j -= 1
+        else:
+        break
+        while True:
+        if k < len(string) and string[k].isdigit():
+        temp_sum += 1
+        k += 1
+        else:
+        break
+        if temp_sum != 0:
+        temp_sum += 1
+        lst[i] = temp_sum
+        else:
+        lst[i] = 0
+        print(max(lst))
+        except:
+        break
+
+5.2.84	最长的指定瑕疵度的元音子串（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+开头和结尾都是元音字母（aeiouAEIOU）的字符串为 元音字符串 ，其中混杂的非元音字母数量为其 瑕疵度 。比如:
+·         “a” 、 “aa”是元音字符串，其瑕疵度都为0
+
+·         “aiur”不是元音字符串（结尾不是元音字符）
+
+·         “abira”是元音字符串，其瑕疵度为2
+给定一个字符串，请找出指定瑕疵度的最长元音字符子串，并输出其长度，如果找不到满足条件的元音字符子串，输出0。
+子串：字符串中任意个连续的字符组成的子序列称为该字符串的子串。
+
+5.2.85	最长方连续方波信号（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+输入一串方波信号，求取最长的完全连续交替方波信号，并将其输出，如果有相同长度的交替方波信号，输出任一即可，方波信号高位用1标识，低位用0标识，如图：
+ 
+说明：
+1） 一个完整的信号一定以0开始然后以0结尾，即010是一个完整信号，但101，1010，0101不是
+2）输入的一串方波信号是由一个或多个完整信号组成
+3） 两个相邻信号之间可能有0个或多个低位，如0110010，011000010
+4） 同一个信号中可以有连续的高位，如01110101011110001010，前14位是一个具有连续高位的信号
+5） 完全连续交替方波是指10交替，如01010是完全连续交替方波，0110不是
+参考代码（Python）：
+import sys
+def check(sub_ss):
+        len_s = len(sub_ss)
+        s_f = False
+
+        next_sig = '01'
+        for ii in range(0, len_s - 1):
+        if sub_ss[ii:ii+2] == next_sig:
+        if s_f is False:
+        s_f = True
+        next_sig = ''.join(next_sig[-1::-1])
+        else:
+        return False
+        return True
+
+
+        if __name__ == "__main__":
+        signal = sys.stdin.readline().strip()
+
+        tmp = signal.split('00')
+        cache = []
+        for i in tmp:
+        if len(i) >=2:
+        if '01' != i[0:2]:
+        i = '0{}'.format(i)
+        if '10' != i[-2:]:
+        i = '{}0'.format(i)
+        cache.append(i)
+        if cache:
+        r = [-1 for _ in cache]
+        for i, sub in enumerate(cache):
+        if check(sub):
+        r[i] = len(sub)
+        max_l = max(r)
+        if max_l == -1:
+        print(-1)
+        else:
+        print(cache[r.index(max_l)])
+        else:
+        print(-1)
+
+参考代码（C#）：
+using System;
+        using System.Collections.Generic;
+        using System.Linq;
+public class Program
+{
+    static void Main(string[] args)
+    {string temp = Console.ReadLine();
+        string rlt = string.Empty;
+        string tempRlt=string.Empty;
+        for (int i = 0; i < temp.Length - 2; i++)
+        {
+            if (tempRlt == string.Empty
+                    && temp[i] == '0')
+            { tempRlt = "0"; }
+            else if (tempRlt == string.Empty)
+            { continue; }
+            if  (temp[i + 1] != '0' || temp[i + 2] != '0')
+            {
+                if (tempRlt.Last() == temp[i + 1])
+                {
+                    tempRlt = string.Empty;
+                    continue;
+                }
+                tempRlt += temp[i + 1];
+                if (tempRlt.Length >= rlt.Length
+                        && tempRlt.Length > 1
+                        &&i==temp.Length-3)
+                { rlt = tempRlt + '0'; }
+            }
+            else
+            {
+                if (tempRlt.Length >= rlt.Length
+                        &&tempRlt.Length>1)
+                { rlt = tempRlt+'0'; }
+                tempRlt = string.Empty;
+            }
+        }
+        if (rlt != string.Empty)
+        { Console.WriteLine(rlt); }
+        else
+        { Console.WriteLine(-1); }
+
+    }
+}
+
+5.2.86	九宫格按键输入（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+九宫格按键输入，有英文和数字两个模式，默认是数字模式，数字模式直接输出数字，英文模式连续按同一个按键会依次出现这个按键上的字母，如果输入“/”或者其他字符，则循环中断，输出此时停留的字母。
+数字和字母的对应关系如下，注意0只对应空格：
+1（,.）2（abc）3（def） 
+4（ghi）5（jkl）6（mno）
+7（pqrs）8（tuv）9（wxyz）
+# 0（空格）/
+输入一串按键，要求输出屏幕显示
+1、#用于切换模式，默认是数字模式，执行#后切换为英文模式； 
+2、/表示延迟，例如在英文模式下，输入22/222，显示为bc，数字模式下/没有效果；
+3、英文模式下，多次按同一键，例如输入22222，显示为b；
+5.2.87	服务器广播（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+服务器连接方式包括直接相连，间接连接。A和B直接连接，B和C直接连接，则A和C间接连接。直接连接和间接连接都可以发送广播。
+给出一个N*N数组，代表N个服务器，matrix[i][j] == 1，则代表i和j直接连接；不等于1时，代表i和j不直接连接。matrix[i][i] == 1，即自己和自己直接连接。matrix[i][j] == matrix[j][i]。
+计算初始需要给几台服务器广播，才可以使每个服务器都收到广播。
+
+5.2.88	解压报文（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+为了提升数据传输的效率，会对传输的报文进行压缩处理。输入一个压缩后的报文，请返回它解压后的原始报文。
+
+压缩规则：n[str]，表示方括号内部的 str 正好重复 n 次。注意 n 为正整数（0 < n <= 100），str只包含小写英文字母，不考虑异常情况。
+参考代码（JAVA）：
+public static void main(String[] args){
+    Scanner s=new Scanner(System.in);
+    while(s.hasNextLine()){
+        String strLine=s.nextLine();
+        System.out.println(getResult(strLine));
+    }
+}
+
+public static String getResult(String data){
+    if(data.indexOf("[")>-1){
+        int nLeft=data.indexOf("[");
+        char[] aryChar=data.toCharArray();
+        int count=0;
+        int nRight=0;
+        for(int i=nLeft;i<aryChar.length;i++){
+            if(aryChar[i]=='[')
+                count++;
+            else if(aryChar[i]==']'){
+                count--;
+                if(count==0){
+                    nRight=i;
+                    break;
+                }
+            }
+        }
+        int nHead=0;
+        String strNum="";
+        for(int i=nLeft-1;i>=0;i--){
+            if(aryChar[i]>='0'&&aryChar[i]<='9')
+                strNum=aryChar[i]+strNum;
+            else{
+                nHead=i+1;
+                break;
+            }
+        }
+        String strHead=data.substring(0,nHead);
+        String strTail=data.substring(nRight+1);
+        String strSub=data.substring(nLeft+1,nRight);
+        int n=Integer.parseInt(strNum);
+        String strRes="";
+        for(int i=0;i<n;i++){
+            strRes=strRes+getResult(strSub);
+        }
+        return strHead+strRes+getResult(strTail);
+    }else{
+        return data;
+    }
+}
+5.2.89	目录删除（**）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+某文件系统中有N个目录，每个目录都一个独一无二的ID。每个目录只有一个父目录，但每个父目录下可以有零个或者多个子目录，目录结构呈树状结构。
+假设，根目录的ID为0，且根目录没有父目录，其他所有目录的ID用唯一的正整数表示，并统一编号。
+现给定目录ID和其父目录ID的对应父子关系表[子目录ID，父目录ID]，以及一个待删除的目录ID，请计算并返回一个ID序列，表示因为删除指定目录后剩下的所有目录，返回的ID序列以递增序输出。
+注意：
+1、被删除的目录或文件编号一定在输入的ID序列中；
+2、当一个目录删除时，它所有的子目录都会被删除。
+参考代码（Java）：
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.TreeMap;
+
+public class Main {
+    public static void main(String[] args) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            Map<Integer, Integer> files = new TreeMap<>();
+            int size = Integer.parseInt(br.readLine());
+            String line;
+            for (int i = 0; i < size; i++) {
+                line = br.readLine();
+                String[] arr = line.split(" ");
+                files.put(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]));
+            }
+            int node = Integer.parseInt(br.readLine());
+            deletFile(node, files);
+            StringBuilder sb = new StringBuilder();
+            for (int val : files.keySet()) {
+                sb.append(val).append(" ");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            System.out.println(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void deletFile(int node, Map<Integer, Integer> files) {
+        Queue<Integer> queue = new LinkedList<Integer>();
+        queue.add(node);
+        while (!queue.isEmpty()) {
+            Integer remove = queue.poll();
+            files.remove(remove);
+            for (Map.Entry<Integer, Integer> entry : files.entrySet()) {
+                if (remove.equals(entry.getValue())) {
+                    queue.add(entry.getKey());
+                }
+            }
+        }
+    }
+}
+
+5.2.90	猜密码（**）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+小杨申请了一个保密柜，但是他忘记了密码。只记得密码都是数字，而且所有数字都是不重复的。请你根据他记住的数字范围和密码的最小数字数量，帮他算下有哪些可能的组合，规则如下：
+1、输出的组合都是从可选的数字范围中选取的，且不能重复；
+2、输出的密码数字要按照从小到大的顺序排列，密码组合需要按照字母顺序，从小到大的顺序排序。
+3、输出的每一个组合的数字的数量要大于等于密码最小数字数量；
+4、如果可能的组合为空，则返回“None”
+参考代码（C++）：
+#include<bits/stdc++.h>
+
+        using namespace std;
+
+        int num;
+        int a[10000005];
+        int b[10000005];
+        char s[100000005];
+
+        void dfs(int i,int n,int len,string s,bool first,bool out)
+        {
+        if(len>=n&&out)
+        printf("%s\n",s.c_str());
+        if(i>=num)
+        return;
+        stringstream oss;
+        if(first)
+        oss << s << a[i];
+        else
+        oss << s << "," << a[i];
+        string ss=oss.str();
+        dfs(i+1,n,len+1,ss,false,true);
+        dfs(i+1,n,len,s,first,false);
+        }
+
+        int main()
+        {
+        fgets(s,sizeof(s),stdin);
+        int i,n,len=strlen(s)-1;
+        scanf("%d",&n);
+        if(len==0)
+        printf("None\n");
+        else
+        {
+        int x=0;
+        num=0;
+        int num2=0;
+        for(i=0;i<len;i++)
+        {
+        if(s[i]==',')
+        {
+        b[num2++]=x;
+        x=0;
+        }
+        else
+        x=x*10+s[i]-'0';
+        }
+        b[num2++]=x;
+        sort(b,b+num2);
+        for(i=0;i<num2;i++)
+        {
+        if(i==0 || b[i]!=b[i-1])
+        a[num++]=b[i];
+        }
+        if(num<n)
+        printf("None\n");
+        else
+        {
+        dfs(0,n,0,"",true,false);
+        }
+        }
+        return 0;
+        }
+
+
+5.2.91	字符串比较 （**）
+时间限制：1秒 | 内存限制：65536K | 语言限制：不限
+给定字符串A、B和正整数V，A的长度与B的长度相等， 请计算A中满足如下条件的最大连续子串的长度：
+1、该连续子串在A和B中的位置和长度均相同。
+2、该连续子串|A[i] – B[i]|之和小于等于V。其中|A[i] – B[i]|表示两个字母ASCII码之差的绝对值。
+参考代码（C++）:
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cmath>
+using namespace std;
+        int main() {
+        string a, b;
+        int n, m;
+        int c[1002];
+        memset(c, 0, sizeof(c));
+        cin >> a >> b >> m;
+        n = a.length();
+        for (int k = 0; k < n; k++) {
+        c[k + 1] = abs(a[k] - b[k]);
+        }
+        int left = 0, right = 0, mmax = 0, mm = 0;
+        while (right < n) {
+        right++;
+        mm += c[right];
+        while (mm > m && left < right) {
+        left++;
+        mm -= c[left];
+        }
+        if (mm <= m) {
+        if (right - left > mmax) {
+        mmax = right - left;
+        }
+        }
+        }
+        cout << mmax << endl;
+        return 0;
+        }
+
+5.2.92	计算堆栈中的剩余数字（**）
+时间限制：1秒 | 内存限制：32768K | 语言限制：不限
+向一个空栈中依次存入正整数， 假设入栈元素n(1<=n<=2^31-1)按顺序依次为nx...n4、n3、n2、n1, 每当元素入栈时，如果n1=n2+...+ny(y的范围[2,x]，1<=x<=1000)，则n1~ny全部元素出栈，重新入栈新元素m(m=2*n1)。
+如：依次向栈存入6、1、2、3, 当存入6、1、2时，栈底至栈顶依次为[6、1、2]；当存入3时，3=2+1，3、2、1全部出栈，重新入栈元素6(6=2*3)，此时栈中有元素6；因为6=6，所以两个6全部出栈，存入12，最终栈中只剩一个元素12。
+参考代码（Python）：
+def add_number(number, data):
+        if len(data) == 0 or int(number) < data[-1]:
+        data.append(int(number))
+        return data
+        else:
+        data.append(int(number))
+        for i in range(len(data) - 1, -1, -1):
+        if sum(data[i: len(data) - 1]) == int(number):
+        data = data[:i]
+        return add_number(2 * int(number), data)
+        else:
+        return data
+
+
+        while True:
+        try:
+        number_list = input().split(" ")
+        data = []
+        for number in number_list:
+        data = add_number(number, data)
+        data = data[::-1]
+        out_put = " ".join(map(lambda x:str(x), data))
+        print(out_put)
+        except:
+        break
+
