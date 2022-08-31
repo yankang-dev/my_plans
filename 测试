@@ -69,3 +69,85 @@ public class Main {
         }
     }
 }
+5.2.2	按索引范围翻转文章片段 （*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+输入一个英文文章片段，翻转指定区间的单词顺序，标点符号和普通字母一样处理。例如输入字符串"I am a developer. "，区间[0,3]，则输出"developer. a am I"。
+参考代码（Java）
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String englishStr = scanner.nextLine().trim();
+        int start = Integer.valueOf(scanner.nextLine().trim());
+        int end = Integer.valueOf(scanner.nextLine().trim());
+        String[] wordArr = englishStr.split("\\s+");
+        start = start < wordArr.length? start: wordArr.length - 1;
+        end = end < wordArr.length? end: wordArr.length - 1;
+        start = start < 0? 0: start;
+        end = end < 0? 0: end;
+        if(start < end && (end - start + 1) <= wordArr.length){
+            String temp = "";
+            for(int i = start, len = (end + start)/2; i <= len; i++){
+                temp = wordArr[i];
+                wordArr[i] = wordArr[start + end - i];
+                wordArr[start + end -i] = temp;
+            }
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0, len = wordArr.length; i < len; i++){
+                sb.append(wordArr[i]);
+                if(i < len -1){
+                    sb.append(" ");
+                }
+            }
+            System.out.println(sb.toString());
+        }else{
+            System.out.println("EMPTY");
+        }
+    }
+}
+
+5.2.3	N进制减法（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+实现一个基于字符串的N机制的减法。 
+需要对输入的两个字符串按照给定的N进制进行减法操作，输出正负符号和表示结果的字符串
+
+5.2.4	数组去重和排序（*）
+时间限制：1秒 | 内存限制：262144K | 语言限制：不限
+给定一个乱序的数组，删除所有的重复元素，使得每个元素只出现一次，并且按照出现的次数从高到低进行排序，相同出现次数按照第一次出现顺序进行先后排序。
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in  = new Scanner(System.in);
+        // < 100 <0?
+        while(in.hasNext()){
+            String inString = in.nextLine();
+            String[] arr = inString.split(",");
+            Map<String, Integer> nums = new HashMap();
+            List<String> re = new ArrayList(); // 去重
+            for (String s : arr) {
+                if (!re.contains(s)){
+                    re.add(s);
+                }
+
+                if (nums.containsKey(s)){
+                    nums.put(s, nums.get(s) + 1);
+                }else {
+                    nums.put(s, 1);
+                }
+            }
+
+            Collections.sort(re, (s1, s2) -> {
+                return nums.get(s2) - nums.get(s1);
+            });
+
+            for (int i = 0; i < re.size(); i++){
+                System.out.print(re.get(i));
+                if (i != re.size() -1) {
+                    System.out.print(",");
+                }
+            }
+            System.out.println();
+        }
+    }
+}
